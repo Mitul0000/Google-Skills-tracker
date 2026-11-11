@@ -28,16 +28,67 @@
   </header>
 
   <main class="container">
-    <!-- Notice Banner -->
-    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-      Your data is kept in SQLite for up to 2 hours after your last activity. Profiles are validated directly from public Google Skills URLs.
+    <!-- How It Works & Features Cards -->
+    <div class="card" style="margin-bottom: 24px;">
+      <h2 style="font-size: 18px; margin-bottom: 6px;">How This Tool Works</h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+        Designed for Google Developer Group (GDG) organizers to verify badge completions for the Learn With Communities campaign.
+      </p>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-item-title">1. Upload Profile CSV</div>
+          <div class="info-item-desc">
+            Upload a CSV containing participants' public Google Skills profile URLs. The system normalizes URLs, preserves original row order, and filters out duplicates for network efficiency.
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-title">2. Live Verification Engine</div>
+          <div class="info-item-desc">
+            The scraper inspects public profile markup, verifying each earned badge against required campaign badges using strict title normalization, date checking, and profile ownership validation.
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-title">3. Real-Time Streaming & Reporting</div>
+          <div class="info-item-desc">
+            Progress streams live via Server-Sent Events (SSE). Results are categorized into score buckets (10/10 down to 0/10), with downloadable reports in CSV and JSON formats.
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-size: 16px; margin-top: 20px; margin-bottom: 6px;">Key Features</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-item-title">Polite Rate Limiting & AIMD</div>
+          <div class="info-item-desc">
+            Built-in token bucket rate limiting (8 req/s) with concurrency caps, exponential backoff, and adaptive slow-down to respect platform bandwidth.
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-title">Intelligent Caching</div>
+          <div class="info-item-desc">
+            Completed 10/10 profiles are cached to avoid redundant fetches on re-uploads, while partial or private profiles are automatically re-checked.
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-title">Privacy & Injection Protection</div>
+          <div class="info-item-desc">
+            No permanent accounts or tracking. Ephemeral SQLite storage expires after 2 hours of inactivity, and CSV export defends against formula injection attacks.
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Upload Card -->
     <div class="card" id="upload-card">
       <h2 style="font-size: 18px; margin-bottom: 12px;">Upload Participant Profiles CSV</h2>
       <div class="dropzone" id="dropzone">
-        <div class="upload-icon">📁</div>
+        <div class="upload-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+        </div>
         <p style="font-weight: 500; font-size: 16px;">Drag & Drop your CSV file here, or click to browse</p>
         <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">
           Max 1,000 rows, up to 2 MB. Columns: <code>Google Skills Profile URL,[INFO]</code>
@@ -53,7 +104,6 @@
             <input type="checkbox" id="force-rescan-checkbox">
             <span>Force full re-scan (ignore cached results)</span>
           </label>
-          <a href="#" id="download-sample-link" style="font-size: 13px; color: var(--primary);">Download sample CSV</a>
         </div>
         <button id="start-scan-btn" class="btn btn-primary" disabled>Start Verification</button>
       </div>
@@ -115,9 +165,9 @@
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
         <h2 style="font-size: 20px;">Results Dashboard</h2>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <a href="/api/report.csv" id="btn-export-csv" class="btn btn-primary" download>📥 Download Report (CSV)</a>
+          <a href="/api/report.csv" id="btn-export-csv" class="btn btn-primary" download>Download Report (CSV)</a>
           <a href="/api/report.json" id="btn-export-json" class="btn btn-secondary" download>JSON Export</a>
-          <button id="btn-rescan" class="btn btn-secondary">🔄 Re-scan</button>
+          <button id="btn-rescan" class="btn btn-secondary">Re-scan</button>
         </div>
       </div>
 

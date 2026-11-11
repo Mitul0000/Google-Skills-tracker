@@ -492,7 +492,7 @@ function createBucketSection(id, title, items, color, totalCount, isError = fals
     actionsBar.innerHTML = `
       <span style="font-size: 13px; color: var(--text-muted);">${count} participant profiles</span>
       <div style="display: flex; gap: 8px;">
-        <button class="btn btn-secondary copy-links-btn" style="padding: 4px 10px; font-size: 12px;">📋 Copy Links</button>
+        <button class="btn btn-secondary copy-links-btn" style="padding: 4px 10px; font-size: 12px;">Copy Links</button>
       </div>
     `;
 
@@ -613,9 +613,10 @@ clearDataBtn.addEventListener("click", async () => {
 });
 
 // Download Sample CSV
-downloadSampleLink.addEventListener("click", (e) => {
-  e.preventDefault();
-  const sampleContent = `Google Skills Profile URL,[INFO]
+if (downloadSampleLink) {
+  downloadSampleLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    const sampleContent = `Google Skills Profile URL,[INFO]
 https://www.skills.google/public_profiles/be556f7b-ab4b-4be7-82fb-9be45202ddd7,All skill badges completed
 https://www.skills.google/public_profiles/8f0d00c3-7674-4042-ba15-d26a3fae84f9,Some skill badges completed
 https://www.skills.google/public_profiles/2fafe410-5b6c-463b-9a1d-61dbfb43e9ac,None of the skill badges completed
@@ -623,14 +624,15 @@ https://www.skills.google/public_profiles/172773ae-1097-499b-a064-0be32bd06b81,A
 https://www.skills.google/public_profiles/9f130a25-e289-41ea-a90a-febbf37b8dc1,Randomly Chosen Profile
 https://www.skills.google/public_profiles/f0633f18-fd81-4cc0-b375-1454da352885,Randomly Chosen Profile
 `;
-  const blob = new Blob([sampleContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "sample_input.csv";
-  a.click();
-  URL.revokeObjectURL(url);
-});
+    const blob = new Blob([sampleContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sample_input.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+}
 
 // Start app
 loadConfig();
