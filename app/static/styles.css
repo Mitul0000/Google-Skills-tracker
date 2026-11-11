@@ -87,17 +87,21 @@ header {
 }
 
 .brand-link,
-.brand-link:visited,
-.brand-link:active {
+a.brand-link,
+a.brand-link:visited,
+a.brand-link:hover,
+a.brand-link:active,
+a.brand-link:focus {
   color: var(--primary) !important;
   text-decoration: none;
   font-weight: 600;
   transition: opacity 0.2s;
 }
 
-.brand-link:hover {
+.brand-link:hover,
+a.brand-link:hover {
   text-decoration: underline;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 a:visited {
@@ -126,11 +130,28 @@ h1 {
 }
 
 /* Features and How It Works */
+.info-card {
+  border-top: 3px solid var(--primary);
+}
+
+.info-section-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
-  margin-top: 16px;
+  margin-top: 14px;
 }
 
 .info-item {
@@ -138,6 +159,39 @@ h1 {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.info-item:hover {
+  border-color: var(--primary);
+}
+
+.step-num {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: rgba(37, 99, 235, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  width: fit-content;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.feature-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--success);
+  background: rgba(30, 142, 62, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  width: fit-content;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
 }
 
 .info-item-title {
@@ -428,17 +482,29 @@ h1 {
 
 .badge-tag {
   display: inline-block;
-  background: rgba(26, 115, 232, 0.1);
+  background: rgba(37, 99, 235, 0.12);
   color: var(--primary);
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 11px;
-  margin: 2px;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 3px;
+  line-height: 1.4;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-tag {
+    background: rgba(59, 158, 255, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 158, 255, 0.35);
+  }
 }
 
 .badge-tag.missing {
-  background: rgba(217, 48, 37, 0.1);
+  background: rgba(225, 29, 72, 0.1);
   color: var(--error);
+  border-color: rgba(225, 29, 72, 0.25);
 }
 
 .score-diff {

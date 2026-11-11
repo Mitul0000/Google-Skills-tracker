@@ -29,47 +29,60 @@
 
   <main class="container">
     <!-- How It Works & Features Cards -->
-    <div class="card" style="margin-bottom: 24px;">
-      <h2 style="font-size: 18px; margin-bottom: 6px;">How This Tool Works</h2>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
-        Designed for Google Developer Group (GDG) organizers to verify badge completions for the Learn With Communities campaign.
-      </p>
+    <div class="card info-card" style="margin-bottom: 24px;">
+      <div class="info-section-header">
+        <h2>How This Tool Works</h2>
+        <p class="section-subtitle">
+          Designed for Google Developer Group (GDG) organizers to verify badge completions for the Learn With Communities campaign.
+        </p>
+      </div>
+
       <div class="info-grid">
         <div class="info-item">
-          <div class="info-item-title">1. Upload Profile CSV</div>
+          <div class="step-num">Step 1</div>
+          <div class="info-item-title">Upload Profile CSV</div>
           <div class="info-item-desc">
             Upload a CSV containing participants' public Google Skills profile URLs. The system normalizes URLs, preserves original row order, and filters out duplicates for network efficiency.
           </div>
         </div>
         <div class="info-item">
-          <div class="info-item-title">2. Live Verification Engine</div>
+          <div class="step-num">Step 2</div>
+          <div class="info-item-title">Live Verification Engine</div>
           <div class="info-item-desc">
             The scraper inspects public profile markup, verifying each earned badge against required campaign badges using strict title normalization, date checking, and profile ownership validation.
           </div>
         </div>
         <div class="info-item">
-          <div class="info-item-title">3. Real-Time Streaming & Reporting</div>
+          <div class="step-num">Step 3</div>
+          <div class="info-item-title">Real-Time Streaming & Reporting</div>
           <div class="info-item-desc">
             Progress streams live via Server-Sent Events (SSE). Results are categorized into score buckets (10/10 down to 0/10), with downloadable reports in CSV and JSON formats.
           </div>
         </div>
       </div>
 
-      <h3 style="font-size: 16px; margin-top: 20px; margin-bottom: 6px;">Key Features</h3>
+      <div class="info-section-header" style="margin-top: 28px;">
+        <h2>Key Features</h2>
+        <p class="section-subtitle">Engineered for speed, accuracy, and platform etiquette.</p>
+      </div>
+
       <div class="info-grid">
         <div class="info-item">
+          <div class="feature-tag">Reliability</div>
           <div class="info-item-title">Polite Rate Limiting & AIMD</div>
           <div class="info-item-desc">
             Built-in token bucket rate limiting (8 req/s) with concurrency caps, exponential backoff, and adaptive slow-down to respect platform bandwidth.
           </div>
         </div>
         <div class="info-item">
+          <div class="feature-tag">Performance</div>
           <div class="info-item-title">Intelligent Caching</div>
           <div class="info-item-desc">
             Completed 10/10 profiles are cached to avoid redundant fetches on re-uploads, while partial or private profiles are automatically re-checked.
           </div>
         </div>
         <div class="info-item">
+          <div class="feature-tag">Security</div>
           <div class="info-item-title">Privacy & Injection Protection</div>
           <div class="info-item-desc">
             No permanent accounts or tracking. Ephemeral SQLite storage expires after 2 hours of inactivity, and CSV export defends against formula injection attacks.
@@ -226,8 +239,18 @@
   <footer>
     <div style="max-width: 900px; margin: 0 auto;">
       <h3 style="font-size: 15px; margin-bottom: 8px;" id="campaign-title">Required Badges (Learn With Communities)</h3>
-      <p style="margin-bottom: 12px;">Only verified badges from this list count towards the 10/10 target:</p>
-      <div id="badges-footer-list" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 20px;"></div>
+      <div id="badges-footer-list" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 20px;">
+        <span class="badge-tag">Explore Generative AI in Agent Platform</span>
+        <span class="badge-tag">Store, Process, and Manage Data on Google Cloud - Console</span>
+        <span class="badge-tag">Using the Google Cloud Speech API</span>
+        <span class="badge-tag">Create Your First Gemini Enterprise Application</span>
+        <span class="badge-tag">Build a Website on Google Cloud</span>
+        <span class="badge-tag">Analyze Images with the Cloud Vision API</span>
+        <span class="badge-tag">Develop AI-Powered Prototypes in Google AI Studio</span>
+        <span class="badge-tag">Implement Speech and Language Solutions with Pre-trained APIs</span>
+        <span class="badge-tag">Configure Service Accounts and IAM Roles for Google Cloud</span>
+        <span class="badge-tag">The Basics of Google Cloud Compute</span>
+      </div>
       <div style="padding-top: 16px; border-top: 1px solid var(--border-color); font-size: 13px;">
         Designed & developed with <a href="https://digifello.dev" target="_blank" rel="noopener noreferrer" class="brand-link">Digifello</a> · AI Tools & Software Engineering
       </div>
