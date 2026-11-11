@@ -68,14 +68,15 @@ header {
 }
 
 .logo-badge {
-  background-color: var(--primary);
-  color: #ffffff;
+  background-color: var(--text-main);
+  color: var(--bg-color);
   font-weight: 700;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 13px;
   letter-spacing: 0.5px;
   display: inline-block;
+  border: 1px solid var(--border-color);
 }
 
 .brand-byline {
@@ -92,16 +93,16 @@ a.brand-link:visited,
 a.brand-link:hover,
 a.brand-link:active,
 a.brand-link:focus {
-  color: var(--primary) !important;
-  text-decoration: none;
+  color: var(--text-main) !important;
+  text-decoration: underline;
+  text-underline-offset: 3px;
   font-weight: 600;
   transition: opacity 0.2s;
 }
 
 .brand-link:hover,
 a.brand-link:hover {
-  text-decoration: underline;
-  opacity: 0.85;
+  opacity: 0.75;
 }
 
 a:visited {
@@ -260,11 +261,14 @@ h1 {
 }
 
 .btn-primary {
-  background: var(--primary);
-  color: #fff;
+  background: var(--text-main);
+  color: var(--card-bg);
+  font-weight: 600;
+  border: 1px solid var(--text-main);
 }
 .btn-primary:hover {
-  background: var(--primary-hover);
+  opacity: 0.9;
+  background: var(--text-main);
 }
 .btn-secondary {
   background: transparent;
