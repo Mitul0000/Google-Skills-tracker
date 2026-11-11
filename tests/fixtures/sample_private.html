@@ -1,0 +1,636 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>Google Skills</title>
+<link crossorigin href='https://cdn.qwiklabs.com' rel='preconnect'>
+<link crossorigin href='https://fonts.gstatic.com' rel='preconnect'>
+<link crossorigin href='https://fonts.googleapis.com' rel='preconnect'>
+<link as='font' crossorigin='anonymous' href='https://cdn.qwiklabs.com/fonts/google-symbols.woff2' rel='preload' type='font/woff2'>
+<link as='font' crossorigin='anonymous' href='https://cdn.qwiklabs.com/fonts/material-icons.woff2' rel='preload' type='font/woff2'>
+<link as='font' crossorigin='anonymous' href='https://cdn.qwiklabs.com/fonts/google-material-icons.woff2' rel='preload' type='font/woff2'>
+<style>
+  @mixin font_face_props {
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+  }
+  
+  @font-face {
+    @include font_face_props;
+  
+    font-family: 'Google Material Icons';
+    src: url('https://cdn.qwiklabs.com/fonts/google-material-icons.woff2') format('woff2');
+  }
+  
+  @font-face {
+    @include font_face_props;
+  
+    font-family: 'Material Icons';
+    src: url('https://cdn.qwiklabs.com/fonts/material-icons.woff2') format('woff2');
+  }
+  
+  @font-face {
+    @include font_face_props;
+  
+    font-family: 'Google Symbols';
+    src: url('https://cdn.qwiklabs.com/fonts/google-symbols.woff2') format('woff2');
+  }
+  
+  .material-icons {
+    font-family: 'Material Icons';
+  }
+  
+  .google-symbols {
+    font-family: 'Google Symbols';
+  }
+  
+  .google-material-icons {
+    font-family: 'Google Material Icons';
+  }
+  
+  .material-icons,
+  .google-symbols,
+  .google-material-icons {
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+</style>
+
+<meta name="action-cable-url" content="/cable" />
+<script>
+//<![CDATA[
+window.gon={};gon.deployment="google-run";
+//]]>
+</script>
+<script>
+  const sessEvent = '';
+  const sessLoginStatus = '';
+  const sessPreviousPath = '';
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    if (arguments[0] === 'event') {
+      dataLayer.push({ event: arguments[1], eventParams: arguments[2] }, { eventParams: undefined });
+    } else {
+      dataLayer.push(arguments);
+    }
+  }
+  let gtmLoaded = false;
+  function glueCookieNotificationBarLoaded() {
+    if (!gtmLoaded) {
+      dataLayerInit(
+        false,
+        false,
+        false,
+        false,
+        'google-run',
+        null,
+        null
+      );
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer',"GTM-MBRHNDG7");
+      pushPageEvent();
+      if (typeof sessEvent !== 'undefined') {
+        pushSessionEvent(sessEvent, sessLoginStatus, sessPreviousPath);
+      }
+      gtmLoaded = true;
+    }
+  }
+</script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/polyfills/webcomponents-loader-2e147cb1679d97581f981243bfc2d1c03dc34a58.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/head_scripts-d8e79d24938e74706a01277b5470297798a7830e.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-1c75122c864db561eb016ef97dbd4eb4a740856f.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-7ab171eafb295d23265cb430c11894461d45a7d7.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors-efabf72b17cb1d5acd58fdbf2ba9226981fc9711.js"></script>
+<script src="https://cdn.qwiklabs.com/nk_components/1.1.48/index.js"></script>
+<script src="https://support.google.com/inapp/api.js"></script>
+
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="gN0p6QQ90Jo8Q-NrKokROZ0D1Zl-UVMr0oPcDD39Fv7CueFb2GE4GoiBr1UoTF03QbAezrE0zu1urOIExtRldw" />
+<meta content='width=device-width, initial-scale=1.0, user-scalable=yes' name='viewport'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='max-snippet:-1, max-image-preview:large' name='robots'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/super_G_optimized.png' property='msapplication-TileImage'>
+<meta content='{&quot;userId&quot;:null,&quot;experimentIds&quot;:[&quot;relaunch_extra&quot;,&quot;lab_page_redesign&quot;,&quot;recert_query_all_used_cert_activities&quot;,&quot;gamification_ui&quot;,&quot;recert&quot;,&quot;hybrid_cert&quot;,&quot;credly&quot;,&quot;recalculate_activities&quot;,&quot;search_sort_by&quot;,&quot;learner_grace_period_upgrade&quot;,&quot;cdn_fonts&quot;,&quot;use_recommender_agent&quot;,&quot;onramp&quot;,&quot;learning_plan_search&quot;,&quot;use_docebo_features&quot;,&quot;landing_page&quot;,&quot;banner_breadcrumbs&quot;,&quot;reroute_new_interview_warmup&quot;,&quot;feedback&quot;,&quot;in_context_all_labs&quot;,&quot;one_stop_hub&quot;,&quot;offboard_gwg_june&quot;,&quot;switch_path_and_explore_headers&quot;,&quot;sso_redirect&quot;,&quot;credly_integration_announcement_modal&quot;,&quot;disallow_innovator_credit_sharing&quot;,&quot;gamification_xp&quot;,&quot;gamification_achievements&quot;,&quot;wipeout_hard_delete&quot;,&quot;alexandria_subscriptions_pagination&quot;,&quot;relaunch&quot;,&quot;front_door_landing_page&quot;,&quot;catalog_filter_chips&quot;,&quot;interview_warmup_turndown&quot;,&quot;learn_with_ai&quot;,&quot;lab_search_data&quot;,&quot;pathfinder_llm_resume_parsing&quot;,&quot;learning_plan_slug&quot;,&quot;remove_gdp_subscription&quot;,&quot;canonical_domain_redirect&quot;,&quot;hide_unpopular_filters&quot;,&quot;docebo_sync&quot;,&quot;search_suggestions&quot;,&quot;offboard_gwg_sept&quot;,&quot;one_tap&quot;,&quot;gwg_catalog&quot;,&quot;new_org_dashboard_announcement&quot;,&quot;gamification_ui_data&quot;,&quot;new_org_dashboard&quot;,&quot;zendesk_to_cases&quot;,&quot;use_mosaic&quot;,&quot;innovator_sign_in&quot;,&quot;gamification_leaderboards&quot;,&quot;relaunch_for_sso&quot;,&quot;gamification_leagues&quot;,&quot;relaunch_collection_ai&quot;,&quot;course_exams&quot;,&quot;recert_expanded_catalog&quot;,&quot;oauth_risc_shutoff&quot;,&quot;in_context_view&quot;,&quot;quota_service_use_lua&quot;,&quot;dialog_queue&quot;,&quot;challenge_lab_fast_track&quot;,&quot;relaunch_grid_list&quot;,&quot;analytics_v2&quot;,&quot;log_redis_memory_stats&quot;,&quot;relaunch_subscriptions&quot;,&quot;entity_api_keys&quot;,&quot;innovator_gear_sign_in&quot;,&quot;next_2026_collections&quot;,&quot;new_sidenav&quot;,&quot;relaunch_credentials&quot;,&quot;google_dev_payment&quot;,&quot;docebo_sync_org_support&quot;,&quot;auto_upgrade_game_labs&quot;,&quot;offboard_gwg_aug&quot;,&quot;recert_filter_used_activities_by_cert&quot;,&quot;discovery_lab_duration_estimate&quot;,&quot;show_org_catalog_button&quot;,&quot;customer_learning_path_improvement&quot;,&quot;show_new_course_exams&quot;,&quot;chime_use_abuse_details&quot;,&quot;search_async&quot;,&quot;subscription_ux&quot;,&quot;catalog_filters_button&quot;,&quot;gwg_paid_chip&quot;,&quot;org_invite_link&quot;,&quot;sitemap_poc&quot;,&quot;cache_explore_page_result&quot;,&quot;dashboard_jobs&quot;,&quot;search_autocomplete&quot;,&quot;gamification_streaks&quot;,&quot;updated_recalculation_ux&quot;,&quot;gamification&quot;,&quot;docebo_ux&quot;]}' name='help-api-product-data'>
+<meta content='{&quot;groupIds&quot;:[]}' name='help-api-custom-data'>
+<meta content='Learn and earn with Google Skills, a platform that provides  free training and certifications for Google Cloud partners and beginners. Explore now.' name='description'>
+<meta content='Google Skills' name='author'>
+<meta content='https://www.skills.google' property='og:url'>
+<meta content='Google Skills' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/super_G_optimized.png' property='og:image'>
+<meta content='1200' property='og:image:width'>
+<meta content='630' property='og:image:height'>
+<meta content='image/png' property='og:image:type'>
+<meta content='Google Skills' property='og:site_name'>
+<meta content='Learn and earn with Google Skills, a platform that provides  free training and certifications for Google Cloud partners and beginners. Explore now.' property='og:description'>
+
+
+<link href='https://www.skills.google/?locale=ar' hreflang='ar' rel='alternate'>
+<link href='https://www.skills.google/?locale=de' hreflang='de' rel='alternate'>
+<link href='https://www.skills.google/?locale=es' hreflang='es' rel='alternate'>
+<link href='https://www.skills.google/?locale=fr' hreflang='fr' rel='alternate'>
+<link href='https://www.skills.google/?locale=fr_CA' hreflang='fr-CA' rel='alternate'>
+<link href='https://www.skills.google/?locale=he' hreflang='he' rel='alternate'>
+<link href='https://www.skills.google/?locale=id' hreflang='id' rel='alternate'>
+<link href='https://www.skills.google/?locale=it' hreflang='it' rel='alternate'>
+<link href='https://www.skills.google/?locale=ja' hreflang='ja' rel='alternate'>
+<link href='https://www.skills.google/?locale=ko' hreflang='ko' rel='alternate'>
+<link href='https://www.skills.google/?locale=pl' hreflang='pl' rel='alternate'>
+<link href='https://www.skills.google/?locale=pt_BR' hreflang='pt-BR' rel='alternate'>
+<link href='https://www.skills.google/?locale=pt_PT' hreflang='pt-PT' rel='alternate'>
+<link href='https://www.skills.google/?locale=ru' hreflang='ru' rel='alternate'>
+<link href='https://www.skills.google/?locale=tr' hreflang='tr' rel='alternate'>
+<link href='https://www.skills.google/?locale=uk' hreflang='uk' rel='alternate'>
+<link href='https://www.skills.google/?locale=zh' hreflang='zh' rel='alternate'>
+<link href='https://www.skills.google/?locale=zh_TW' hreflang='zh-TW' rel='alternate'>
+<link href='https://www.skills.google/' hreflang='en' rel='alternate'>
+<link href='https://www.skills.google/' hreflang='x-default' rel='alternate'>
+<link href='https://cdn.qwiklabs.com/X46FrQX4iLxHW5MxL8jICvgZM0evMEKscCeQO%2BazGdo%3D' rel='icon' type='image/x-icon'>
+<link href='https://www.skills.google/' rel='canonical'>
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Google+Sans+Text:400,500,700" />
+
+<link rel="stylesheet" href="https://cdn.qwiklabs.com/assets/application-454149866384cc488852f96cc63255b75d248f0b.css" media="all" />
+<link rel="stylesheet" href="https://www.gstatic.com/glue/cookienotificationbar/cookienotificationbar.min.css" />
+
+
+<style>
+  :root {
+    --primary-text-on-surface-color: #355d9c;
+    --primary-text-on-surface-color-dark: #2f538b;
+    --primary-text-on-surface-color-darker: #29497a;
+    --primary-text-on-surface-color-darkest: #243e69;
+    --primary-surface-color: #586d8d;
+    --primary-surface-color-rgb: 88,109,141;
+    --primary-surface-color-light: #e0e4eb;
+    --primary-surface-color-lightest: #eff2f5;
+    --text-on-primary-color: #ffffff;
+    --accent-text-on-surface-color: #f000e8;
+    --accent-surface-color: #f9ab00;
+    --accent-surface-color-rgb: 249,171,0;
+    --accent-surface-color-light: #ffefcc;
+    --text-on-accent-color: #000000;
+  }
+</style>
+
+
+
+</head>
+<body class='relaunch front-door learner-layout-body relaunch '>
+<div class='body-container' relaunch>
+<div class='body-header'>
+<ql-toolbar class='app-toolbar' jumpEnabled role='banner'>
+<div class='toolbar-navigation' slot='navigation'>
+<ql-toggle-button animatedToggle="true" expandable="true" for="app-nav" onIcon="menu_open" offIcon="menu" label="Menu" class="always-show" data-tooltip-text="Menu"></ql-toggle-button>
+</div>
+<div class='toolbar-title gs-logo' slot='title'>
+<a class="custom-logo" aria-label="Google Skills" href="/"><div class="custom-logo"><img alt="Google Skills" height="24" aria-label="Google Skills" src="https://cdn.qwiklabs.com/lqJbxogu4tSLez1OvjDcIO8rwow6cPLwvrfIdmQLf6U%3D" /></div></a>
+
+</div>
+<div class='search-bar tablet-hide' slot='search'><div class='search-bar-container visible-search-header'>
+<form class="header-search-form" action="/catalog" accept-charset="UTF-8" method="get">
+<input aria-autocomplete='list' aria-controls='searchbar-autocomplete-menu-center' aria-expanded='false' autocomplete='off' class='header-search-input' id='searchbar-autocomplete-center' name='keywords' placeholder='What do you want to learn today?' role='combobox'>
+<div class='elevation-3' id='searchbar-autocomplete-loading-icon-center'>
+<ql-spinner></ql-spinner>
+<div class='ql-body-small'>Loading...</div>
+</div>
+<div class='elevation-3' id='searchbar-autocomplete-no-results-center'>
+<div class='ql-body-small'>No results found.</div>
+</div>
+<ul aria-hidden='true' aria-live='polite' class='hide' id='searchbar-autocomplete-menu-center' role='listbox'></ul>
+<ql-icon-button class='search-bar-button search-button' icon='search' label='Search' type='submit'></ql-icon-button>
+</form>
+
+<ql-icon-button class='exit-search-button show-tablet' icon='close' inert label='Exit search'></ql-icon-button>
+</div>
+</div>
+<div class='toolbar-actions' slot='action'>
+<div class='hide-under-390'>
+<ql-icon-button class='header-search-button show-tablet' data-toggle='tooltip' icon='search' label='Search for Google Skills content' title='Search'></ql-icon-button>
+
+</div>
+<ql-icon-button class='mobile-hide' data-tooltip-text='Help' icon='help_outline' id='help-menu-button' label='Help options'></ql-icon-button>
+<ql-menu for='help-menu-button' id='help-menu'>
+<ql-menu-item data-analytics-action='opened_help' data-analytics-label='' label='Help Center' onclick='hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:null},&quot;context&quot;:&quot;&quot;})'></ql-menu-item>
+<ql-menu-item href='https://support.google.com/qwiklabs/contact/Google_Skills' label='Contact Us' target='_blank'></ql-menu-item>
+<ql-menu-item href='https://reportingwidget.google.com/widget/54?cid=1&amp;url=https://www.skills.google/?' label='Report Illegal Content'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button class='mobile-hide' data-tooltip-text='Language' icon='language' id='language' label='Language options'></ql-icon-button>
+<ql-menu for='language'>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ar' href='/?locale=ar' label='العربية‬‎' lang='ar'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='de' href='/?locale=de' label='Deutsch' lang='de'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='en' href='/?locale=en' label='English' lang='en'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='es' href='/?locale=es' label='español (Latinoamérica)' lang='es'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr' href='/?locale=fr' label='français' lang='fr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr_CA' href='/?locale=fr_CA' label='français (Canada)' lang='fr-CA'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='he' href='/?locale=he' label='עברית' lang='he'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='id' href='/?locale=id' label='bahasa Indonesia' lang='id'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='it' href='/?locale=it' label='italiano' lang='it'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ja' href='/?locale=ja' label='日本語' lang='ja'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ko' href='/?locale=ko' label='한국어' lang='ko'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pl' href='/?locale=pl' label='polski' lang='pl'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_BR' href='/?locale=pt_BR' label='português (Brasil)' lang='pt-BR'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_PT' href='/?locale=pt_PT' label='português (Portugal)' lang='pt-PT'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ru' href='/?locale=ru' label='русский' lang='ru'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='tr' href='/?locale=tr' label='Türkçe' lang='tr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='uk' href='/?locale=uk' label='українська' lang='uk'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh' href='/?locale=zh' label='简体中文' lang='zh'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh_TW' href='/?locale=zh_TW' label='繁體中文' lang='zh-TW'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button aria-expanded='false' aria-haspopup aria-label='More options' class='mobile-show' data-toggle='tooltip' icon='more_vert' id='mobile-more-menu-button' title='More options'></ql-icon-button>
+<ql-menu class='mobile-show' for='mobile-more-menu-button' id='mobile-more-menu'>
+
+
+<ql-menu-item class='show-under-390 search-submenu' label='Search'></ql-menu-item>
+<ql-menu-item aria-controls='help-submenu' aria-expanded='false' aria-haspopup='true' id='help-submenu-button' label='Help' role='button' tabindex='0'></ql-menu-item>
+<ql-menu-item aria-controls='language-submenu' aria-expanded='false' aria-haspopup='true' id='language-submenu-button' label='Language' role='button' tabindex='0'></ql-menu-item>
+</ql-menu>
+
+<ql-menu class='submenu' for='help-submenu-button' id='help-submenu'>
+<ql-menu-item data-analytics-action='opened_help' data-analytics-label='' label='Help Center' onclick='hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:null},&quot;context&quot;:&quot;&quot;})'></ql-menu-item>
+<ql-menu-item href='https://support.google.com/qwiklabs/contact/Google_Skills' label='Contact Us' target='_blank'></ql-menu-item>
+<ql-menu-item href='https://reportingwidget.google.com/widget/54?cid=1&amp;url=https%3A%2F%2Fwww.skills.google%2F%3F' label='Report Illegal Content'></ql-menu-item>
+</ql-menu>
+<ql-menu class='submenu' for='language-submenu-button' id='language-submenu'>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ar' href='/?locale=ar' label='العربية‬‎' lang='ar' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='de' href='/?locale=de' label='Deutsch' lang='de' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='en' href='/?locale=en' label='English' lang='en' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='es' href='/?locale=es' label='español (Latinoamérica)' lang='es' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr' href='/?locale=fr' label='français' lang='fr' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr_CA' href='/?locale=fr_CA' label='français (Canada)' lang='fr-CA' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='he' href='/?locale=he' label='עברית' lang='he' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='id' href='/?locale=id' label='bahasa Indonesia' lang='id' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='it' href='/?locale=it' label='italiano' lang='it' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ja' href='/?locale=ja' label='日本語' lang='ja' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ko' href='/?locale=ko' label='한국어' lang='ko' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pl' href='/?locale=pl' label='polski' lang='pl' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_BR' href='/?locale=pt_BR' label='português (Brasil)' lang='pt-BR' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_PT' href='/?locale=pt_PT' label='português (Portugal)' lang='pt-PT' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ru' href='/?locale=ru' label='русский' lang='ru' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='tr' href='/?locale=tr' label='Türkçe' lang='tr' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='uk' href='/?locale=uk' label='українська' lang='uk' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh' href='/?locale=zh' label='简体中文' lang='zh' role='menuitem'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh_TW' href='/?locale=zh_TW' label='繁體中文' lang='zh-TW' role='menuitem'></ql-menu-item>
+</ql-menu>
+
+<ql-button class='mobile-hide' data-analytics-action='clicked_header_sign_in' data-analytics-actions='[&quot;clicked_header_sign_in&quot;, &quot;navigation&quot;]' data-analytics-button-text='Sign in' data-analytics-label='Sign in' data-analytics-legacy-event-name='clicked_header_sign_in' data-analytics-link-url='/users/sign_in' data-analytics-position='header' data-analytics-type='eventParams' href='/users/sign_in' label='Sign in' text></ql-button>
+<ql-button ariaLabel='Join by creating an account' class='join-btn' data-analytics-action='clicked_header_join' data-analytics-actions='[&quot;clicked_header_join&quot;, &quot;navigation&quot;]' data-analytics-button-text='Join' data-analytics-label='Join' data-analytics-legacy-event-name='clicked_header_join' data-analytics-link-url='/users/sign_up' data-analytics-position='header' data-analytics-type='eventParams' href='/users/sign_up' label='Join'></ql-button>
+<script src='https://accounts.google.com/gsi/client'></script>
+<div data-authenticity_token='Z7yT04Z8pSQd4GZQWu1F9K7NKLp4eUxXfQn-JmUZH2gl2FthWiBNpKkiKm5YKAn6cn7j7bcc0ZHBJsAunjBs4Q' data-cancel_on_tap_outside='false' data-client_id='1023251155897-tb54g624q9e77gtsrnemgv4c2ihekurv.apps.googleusercontent.com' data-login_uri='/auth/google' data-prompt_parent_id='g_id_onload' data-turbo='false' id='g_id_onload'></div>
+
+
+</div>
+</ql-toolbar>
+</div>
+<div class='body-container__inner'>
+<ql-sidenav id='app-nav' items='[{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;Home&quot;,&quot;icon&quot;:&quot;home&quot;,&quot;active&quot;:true,&quot;href&quot;:&quot;/&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav&quot;,&quot;label&quot;:&quot;Home&quot;}},{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;Catalog&quot;,&quot;icon&quot;:&quot;book_2&quot;,&quot;active&quot;:false,&quot;href&quot;:&quot;/catalog&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav&quot;,&quot;label&quot;:&quot;Catalog&quot;}},{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;Paths&quot;,&quot;icon&quot;:&quot;conversion_path&quot;,&quot;active&quot;:false,&quot;href&quot;:&quot;/paths&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav&quot;,&quot;label&quot;:&quot;Paths&quot;}},{&quot;type&quot;:&quot;dropdown&quot;,&quot;label&quot;:&quot;Collections&quot;,&quot;icon&quot;:&quot;category&quot;,&quot;active&quot;:false,&quot;children&quot;:[{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;AI Boost Bites&quot;,&quot;icon&quot;:null,&quot;active&quot;:false,&quot;href&quot;:&quot;/collections/ai-boost-bites&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav_collections&quot;,&quot;label&quot;:&quot;AI Boost Bites&quot;}},{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;Cloud&quot;,&quot;icon&quot;:null,&quot;active&quot;:false,&quot;href&quot;:&quot;/collections/cloud&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav_collections&quot;,&quot;label&quot;:&quot;Cloud&quot;}},{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;DeepMind&quot;,&quot;icon&quot;:null,&quot;active&quot;:false,&quot;href&quot;:&quot;/collections/deepmind&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav_collections&quot;,&quot;label&quot;:&quot;DeepMind&quot;}}],&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav&quot;,&quot;label&quot;:&quot;Collections&quot;}},{&quot;type&quot;:&quot;dropdown&quot;,&quot;label&quot;:&quot;Credentials&quot;,&quot;icon&quot;:&quot;license&quot;,&quot;active&quot;:false,&quot;children&quot;:[{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;Certificate&quot;,&quot;icon&quot;:null,&quot;active&quot;:false,&quot;href&quot;:&quot;/credentials/certificate&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav_credentials&quot;,&quot;label&quot;:&quot;Certificate&quot;}},{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;Skill badge&quot;,&quot;icon&quot;:null,&quot;active&quot;:false,&quot;href&quot;:&quot;/credentials/skill_badge&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav_credentials&quot;,&quot;label&quot;:&quot;Skill badge&quot;}},{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;Certification&quot;,&quot;icon&quot;:null,&quot;active&quot;:false,&quot;href&quot;:&quot;/credentials/tech_certification&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav_credentials&quot;,&quot;label&quot;:&quot;Certification&quot;}}],&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav&quot;,&quot;label&quot;:&quot;Credentials&quot;}},{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;Subscriptions&quot;,&quot;icon&quot;:&quot;subscriptions&quot;,&quot;active&quot;:false,&quot;href&quot;:&quot;/subscriptions&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav&quot;,&quot;label&quot;:&quot;Subscriptions&quot;}},{&quot;type&quot;:&quot;item&quot;,&quot;label&quot;:&quot;Organizations&quot;,&quot;icon&quot;:&quot;corporate_fare&quot;,&quot;active&quot;:false,&quot;href&quot;:&quot;/learningcenter&quot;,&quot;analytics&quot;:{&quot;position&quot;:&quot;application_sidenav&quot;,&quot;label&quot;:&quot;Organizations&quot;}}]'>
+<ql-fab data-analytics-action='login_start' data-analytics-button-text='Sign in' data-analytics-label='Sign in' data-analytics-position='application_sidenav' data-analytics-type='eventParams' expandable href='/users/sign_in' icon='login' label='Sign in' slot='start'></ql-fab>
+</ql-sidenav>
+
+<div class='body-content'>
+<div class='banner'>
+<div id='callout-container'>
+<ql-callout id='message-5' severity='warning'>
+<div slot='content'>
+We are currently experiencing intermittent issues with the Gemini Enterprise labs. Please bear with us while we work on the resolution.
+</div>
+</ql-callout>
+</div>
+
+</div>
+<div class='page-header'>
+<div class='page-main-banner'>
+<div class='page-main-banner-breadcrumbs'>
+
+</div>
+<aside aria-label='Free trial' class='page-main-banner-console-free-trial'>
+<div class='console-free-trial'>
+<p class='console-free-trial-content ql-body-medium'>
+Apply your skills in Google Cloud console
+</p>
+<div class='console-free-trial-actions'>
+<ql-button data-analytics-action='gcp_cta' data-analytics-position='free trial banner' data-analytics-type='eventParams' elevated href='https://console.cloud.google.com/freetrial' label='Get started' target='_blank'></ql-button>
+</div>
+</div>
+</aside>
+</div>
+
+</div>
+<main id='jump-content' tabindex='-1'>
+<div class='guest-front-door-wrapper'>
+
+<nk-landing-page class='hero-section'>
+<div class='guest-front-door-block hero-body'>
+<h1 class='ql-display-large'>Build AI skills for tomorrow, today</h1>
+<span class='ql-headline-small'>Whether you’re just getting started or looking to deepen your knowledge, future proof your skills on Google’s new learning platform built for you.</span>
+<div class='catalog-search'>
+<form class="js-search-form" onsubmit="ql.searchFilter.search(true, &#39;.js-search-form&#39;, &#39;.js-filter-form&#39;, ql.filter.filter.getCurrentFilterParams()); return false;" action="/searches/elasticsearch" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="vUIVygwL7110MdWn7aUDDs3cZZO8cBJHQ6mjnJxuv45oGcsk0guO5ngihO8n4HUXYqTQ1S4ep5MbtVrn62TBLg" autocomplete="off" />
+<input type="search" name="keywords" id="autocomplete" class="js-autocomplete" maxlength="255" autocomplete="off" no_monkey_patch="true" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="autocomplete-menu" data-placeholder='{"long":"What do you want to learn today?","short":"Search"}'>
+<ql-icon-button aria-label='Search button' class='search-bar-icon search' icon='search'></ql-icon-button>
+<ql-icon-button aria-label='Clear search' class='search-bar-icon clear' icon='close'></ql-icon-button>
+<input type="hidden" name="locale" id="header_locale" autocomplete="off">
+<div class='elevation-3' id='autocomplete-loading-icon'>
+<ql-spinner></ql-spinner>
+<div class='ql-body-small'>Loading...</div>
+</div>
+<div class='elevation-3' id='autocomplete-no-results'>
+<div class='ql-body-small'>No results found.</div>
+</div>
+<ul aria-hidden='true' aria-live='polite' class='hide' id='autocomplete-menu' role='listbox'></ul>
+</form>
+
+
+<div class='hero-suggestions'>
+<ql-button filled href='/catalog?keywords=AI+Boost+Bites' icon='prompt_suggestion'>
+AI Boost Bites
+</ql-button>
+<ql-button filled href='/catalog?keywords=DeepMind' icon='prompt_suggestion'>
+DeepMind
+</ql-button>
+<ql-button filled href='/catalog?keywords=Gemini' icon='prompt_suggestion'>
+Gemini
+</ql-button>
+</div>
+</div>
+<div class='hero-buttons'>
+<ql-button href='/users/sign_up'>
+Get started
+</ql-button>
+</div>
+</div>
+</nk-landing-page>
+<ql-floating-nav-bar-container>
+<section class='guest-front-door-block trending-body' id='learn-ai' label='Learn AI' tabindex='0'>
+<div class='top-matter'>
+<h2 class='ql-display-medium trending-header'>Skill up on <strong>AI</strong> today</h2>
+<span class='subheader ql-body-large'>AI isn’t a future state. It’s here to stay. With more than a decade of AI innovation and integration in the cloud, Google is your trusted partner in navigating this new reality.</span>
+</div>
+<ql-carousel class='categories' hideButtons>
+<ql-chip aria-pressed='true' class='active' large role='button' tabindex='0'>
+Featured
+</ql-chip>
+<ql-chip aria-pressed='false' class='' large role='button' tabindex='0'>
+Artificial Intelligence
+</ql-chip>
+<ql-chip aria-pressed='false' class='' large role='button' tabindex='0'>
+Vertex AI
+</ql-chip>
+<ql-chip aria-pressed='false' class='' large role='button' tabindex='0'>
+Gemini
+</ql-chip>
+<ql-chip aria-pressed='false' class='' large role='button' tabindex='0'>
+AutoML
+</ql-chip>
+<ql-chip aria-pressed='false' class='' large role='button' tabindex='0'>
+Prompt design
+</ql-chip>
+</ql-carousel>
+<div class='featured'>
+<div class='div cards cards_featured'>
+<ql-activity-card class='card' dark-mode description='This learning path is for data professionals who want to integrate generative AI into their workflow. Learn how to use BigQuery Machine Learning for inference, work directly with Gemini models in BigQuery, and boost your productivity with Gemini&#39;s assistance. Finally, test your knowledge by creating machine learning models with BigQuery ML in a hands-on lab.' duration='10 hours 20 minutes' name='Integrate Generative AI Into Your Data Workflow' path='/paths/1281' relaunch_extra type='learning_path'></ql-activity-card>
+<ql-activity-card class='card' dark-mode description='This learning path provides a comprehensive introduction to machine learning operations (MLOps), with a specific focus on generative AI. You’ll learn to manage the entire lifecycle of generative AI models, from development and deployment to monitoring. Test your knowledge with a hands-on lab where you&#39;ll train and deploy a model in the cloud with Vertex AI.' duration='18 hours 30 minutes' name='Deploy and Manage Generative AI Models' path='/paths/1283' relaunch_extra type='learning_path'></ql-activity-card>
+<ql-activity-card class='card' dark-mode description='This learning path is for application developers who want to enhance their projects with the power of generative AI. From understanding the core concepts of Gemini, Google&#39;s advanced language model, to building end-to-end applications on Google Cloud, this path will guide you through essential techniques and tools to seamlessly integrate gen AI capabilities into your development workflow. Finally, dive into a hands-on lab to learn how to build your own gen AI applications with Gemini and Streamlit.' duration='19 hours 1 minute' name='Build and Modernize Applications With Generative AI' path='/paths/1282' relaunch_extra type='learning_path'></ql-activity-card>
+</div>
+<div class='div cards cards_artificial_intelligence cards__hidden'>
+<ql-activity-card class='card' dark-mode description='Turn your understanding of agents into practical reality by building, configuring, and running your first AI agent using Google’s Agent Development Kit (ADK) in Gemini platform.
+
+In this hands-on course, you’ll set up a complete ADK development environment, create agents with both Python code and YAML configuration, and run them through multiple interfaces. You’ll also learn the core parameters that define agent behavior
+Explore other content in the Gemini Agent Ready (GEAR) program.' duration='1 hour 15 minutes' level='introductory' name='Build Your First Agent with Agent Development Kit (ADK)' path='/course_templates/1563' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' dark-mode description='Artificial intelligence (AI) and machine learning (ML) represent an important evolution in information technologies that are quickly transforming a wide range of industries. Innovating with Google Cloud Artificial Intelligence explores how organizations can use AI and ML to transform their business processes.
+
+As part of the Cloud Digital Leader learning path, this course aims to help individuals grow in their role and build the future of their business.' duration='1 hour 30 minutes' level='introductory' name='Innovating with Google Cloud Artificial Intelligence' path='/course_templates/946' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' dark-mode description='This course introduces the products and solutions to solve NLP problems on Google Cloud. Additionally, it explores the processes, techniques, and tools to develop an NLP project with neural networks by using Vertex AI and TensorFlow.' duration='8 hours' level='intermediate' name='Natural Language Processing on Google Cloud' path='/course_templates/40' relaunch_extra type='course'></ql-activity-card>
+</div>
+<div class='div cards cards_vertex_ai cards__hidden'>
+<ql-activity-card class='card' credential-type='skill_badge' dark-mode description='Complete the intermediate Enhance Gemini Model Capabilities skill badge to demonstrate skills in the following: leveraging advanced features of Gemini models, including code generation and execution, grounding, controlled content generation, and synthetic data creation, to build more powerful and sophisticated AI applications.' duration='45 minutes' level='intermediate' name='Enhance Gemini Model Capabilities' path='/course_templates/1241' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' credential-type='skill_badge' dark-mode description='Complete the intermediate Explore Generative AI in Agent Platform skill badge to demonstrate skills in text generation, image and video analysis for enhanced content creation, and applying function calling techniques within the Gemini API. Discover how to leverage sophisticated Gemini techniques, explore multimodal content generation, and expand the capabilities of your AI-powered projects. Explore other content in the Gemini Enterprise Agent Ready (GEAR) program.' duration='30 minutes' level='intermediate' name='Explore Generative AI in Agent Platform' path='/course_templates/959' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' dark-mode description='Generative AI applications can create new user experiences that were nearly impossible before the invention of large language models (LLMs). As an application developer, how can you use generative AI to build engaging, powerful apps on Google Cloud?
+
+In this course, you&#39;ll learn about generative AI applications and how you can use prompt design and retrieval augmented generation (RAG) to build powerful applications using LLMs. You&#39;ll learn about a production-ready architecture that can be used for generative AI applications and you&#39;ll build an LLM and RAG-based chat application.  Explore other content in the Gemini Agent Ready (GEAR) program.' duration='4 hours' level='intermediate' name='Create Generative AI Apps on Google Cloud' path='/course_templates/1120' relaunch_extra type='course'></ql-activity-card>
+</div>
+<div class='div cards cards_gemini cards__hidden'>
+<ql-activity-card class='card' credential-type='skill_badge' dark-mode description='Complete the intermediate Develop Gen AI Apps with Gemini and Streamlit skill badge course to demonstrate skills in text generation, applying function calls with the Python SDK and Gemini API, and deploying a Streamlit application with Cloud Run. In this course, you learn Gemini prompting, test Streamlit apps in Cloud Shell, and deploy them as Docker containers in Cloud Run. Explore other content in the Gemini Enterprise Agent Ready (GEAR) program.' duration='45 minutes' level='intermediate' name='Develop Gen AI Apps with Gemini and Streamlit' path='/course_templates/978' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' credential-type='skill_badge' dark-mode description='Complete the intermediate Inspect Rich Documents with Gemini Multimodality and Multimodal RAG skill badge course to demonstrate skills in the following: using multimodal prompts to extract information from text and visual data, generating a video description, and retrieving extra information beyond the video using multimodality with Gemini; building metadata of documents containing text and images, getting all relevant text chunks, and printing citations by using Multimodal Retrieval Augmented Generation (RAG) with Gemini. Explore other content in the Gemini Enterprise Agent Ready (GEAR) program.' duration='45 minutes' level='intermediate' name='Inspect Rich Documents with Gemini Multimodality and Multimodal RAG' path='/course_templates/981' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' credential-type='skill_badge' dark-mode description='Complete the introductory Build Real World AI Applications with Gemini and Imagen skill badge to demonstrate skills in the following: image recognition, natural language processing, image generation using Google&#39;s powerful Gemini and Imagen models, deploying applications on the Google Cloud Agent Platform. Explore other content in the Gemini Enterprise Agent Ready (GEAR) program.' duration='1 hour' name='Build Real World AI Applications with Gemini and Imagen' path='/course_templates/1076' relaunch_extra type='course'></ql-activity-card>
+</div>
+<div class='div cards cards_automl cards__hidden'>
+<ql-activity-card class='card' dark-mode description='Using large scale computing power to recognize patterns and &quot;read&quot; images is one of the foundational technologies in AI, from self-driving cars to facial recognition. The Google Cloud Platform provides world class speed and accuracy via systems that can utilized by simply calling APIs. With these and a host of other APIs, GCP has a tool for just about any machine learning job. In this introductory quest, you will get hands-on practice with machine learning as it applies to image processing by taking labs that will enable you to label images, detect faces and landmarks, as well as extract, analyze, and translate text from within images.' duration='3 hours' level='introductory' name='Intro to ML: Image Processing' path='/course_templates/739' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' dark-mode description='The course begins with a discussion about data: how to improve data quality and perform exploratory data analysis. We describe Vertex AI AutoML and how to build, train, and deploy an ML model without writing a single line of code. You will understand the benefits of Big Query ML. We then discuss how to optimize a machine learning (ML) model and how generalization and sampling can help assess the quality of ML models for custom training.' duration='17 hours' level='introductory' name='Launching into Machine Learning' path='/course_templates/8' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' dark-mode description='Incorporating machine learning into data pipelines increases the ability to extract insights from data. This course covers ways machine learning can be included in data pipelines on Google Cloud. For little to no customization, this course covers AutoML. For more tailored machine learning capabilities, this course introduces Notebooks and BigQuery machine learning (BigQuery ML). Also, this course covers how to productionalize machine learning solutions by using Vertex AI.' duration='7 hours' level='intermediate' name='Smart Analytics, Machine Learning, and AI on Google Cloud' path='/course_templates/55' relaunch_extra type='course'></ql-activity-card>
+</div>
+<div class='div cards cards_prompt_design cards__hidden'>
+<ql-activity-card class='card' credential-type='skill_badge' dark-mode description='Complete the introductory Prompt Design in Agent Platform skill badge to demonstrate skills in the following: prompt engineering, image analysis, and multimodal generative techniques, within Agent Platform. Discover how to craft effective prompts, guide generative AI output, and apply Gemini models to real-world marketing scenarios. Explore other content in the Gemini Enterprise Agent Ready (GEAR) program.' duration='1 hour' level='introductory' name='Prompt Design in Agent Platform' path='/course_templates/976' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' dark-mode description='This course introduces Vertex AI Studio, a tool to interact with generative AI models, prototype business ideas, and launch them into production. Through an immersive use case, engaging lessons, and a hands-on lab, you’ll explore the prompt-to-product lifecycle and learn how to leverage Vertex AI Studio for Gemini multimodal applications, prompt design, prompt engineering, and model tuning. The aim is to enable you to unlock the potential of gen AI in your projects with Vertex AI Studio.' duration='2 hours' level='introductory' name='Introduction to Vertex AI Studio' path='/course_templates/552' relaunch_extra type='course'></ql-activity-card>
+<ql-activity-card class='card' dark-mode description='Specifically designed for healthcare professionals, this course demystifies generative AI, the latest breakthrough in artificial intelligence, and the large language models (LLMs) that drive it. Discover real-world applications of generative AI in healthcare settings and master the art of crafting effective prompts tailored to your goals. Explore other content in the Gemini Agent Ready (GEAR) program. ' duration='1 hour' level='introductory' name='Generative AI for Healthcare' path='/course_templates/1081' relaunch_extra type='course'></ql-activity-card>
+</div>
+</div>
+<ql-button href='/catalog?sort_by=marketing_featured' onclick='ql.track(&quot;frontdoor_explore_catalog&quot;)'>Explore catalog</ql-button>
+</section>
+<section class='guest-front-door-block media-msg-body' id='join-gear' label='Join GEAR' tabindex='0'>
+<div class='media-msg-text'>
+<h2 class='ql-display-medium'>Learn and build with other developers</h2>
+<span class='ql-body-large'>Continuous learning starts with community. Join the GEAR program and fuel your cloud journey with 35 monthly credits for hands-on learning in Google Skills, at no cost to you.</span>
+<ql-button href='https://developers.google.com/program/gear' outlined target='_blank'>
+Join GEAR
+</ql-button>
+</div>
+<div class='media-msg-thumbnail'>
+<img role="presentation" src="https://cdn.qwiklabs.com/assets/google_cloud_gear-8fc459e27583e4c5229c2a0831f49753571f3b0d.png" />
+</div>
+</section>
+<section class='guest-front-door-block statistics-body' id='train-your-team' label='Train your team' tabindex='0'>
+<ql-chip icon='corporate_fare' large>
+<span>For teams</span>
+</ql-chip>
+<h2 class='ql-display-medium'>Hands-on learning is better for business</h2>
+<div class='metrics'>
+<div class='metric'><h3>77%</h3> of <a target="_blank" href="https://services.google.com/fh/files/misc/value_of_training_idc_paper.pdf">learners</a> prefer some level of instructor-led training vs. on-demand training alone.</div>
+<div class='metric'><h3>90%</h3> of <a target="_blank" href="https://services.google.com/fh/files/misc/value_of_training_idc_paper.pdf">instructor-led learning</a> is completed vs. less than 5% of self-paced.</div>
+<div class='metric'><h3>133%</h3> increase in <a target="_blank" href="https://services.google.com/fh/files/misc/value_of_training_idc_paper.pdf">employee retention</a> when companies invest in hands-on learning.</div>
+</div>
+<ql-button href='/learningcenter' outlined target='_blank'>
+Skill up your workforce
+</ql-button>
+</section>
+<section class='guest-front-door-block multi-msg-body' id='get-credentialed' label='Get credentialed' tabindex='0'>
+<div class='multi-msg-body__header'>
+<h2 class='ql-display-medium credential-title'>Future proof your career with Google credentials</h2>
+<span class='ql-body-large credential-description'>Certifications can be a big step, and a big investment. Need to build your skills first? Explore our Skill Badges and Certificates.</span>
+</div>
+<ql-accordion>
+<img slot="images" data-section-idx="2" role="presentation" src="https://cdn.qwiklabs.com/assets/credentials_certifications-0448f8a63e1aa69f9424b7d54615350bfd75bbe1.svg" />
+<img slot="images" data-section-idx="0" role="presentation" src="https://cdn.qwiklabs.com/assets/credentials_certificates_superg-2e0356bfcc207a4a1982a3f2314b6ed05d8130a2.svg" />
+<img slot="images" data-section-idx="1" role="presentation" src="https://cdn.qwiklabs.com/assets/credentials_badges-d87a2ab17da6c8986c37c81025c001df0d6f129e.svg" />
+<ql-accordion-section>
+<h3 class='ql-title-large' role='heading' slot='header'>
+Kickstart your career with certificates
+</h3>
+<p class='ql-body-large' slot='body'>
+Unlock new career paths and gain in-demand skills with certificates. Complete a certificate learning path on Google Skills to earn a shareable digital credential. No prerequisites required.
+</p>
+<a class='ql-body-medium' href='https://cloud.google.com/learn/certificates' slot='body' target='_blank'>
+Explore certificates
+</a>
+</ql-accordion-section>
+<ql-accordion-section>
+<h3 class='ql-title-large' role='heading' slot='header'>
+Level up with skill badges
+</h3>
+<p class='ql-body-large' slot='body'>
+Prove your practical, technical skills with skill badges. Complete a  series of skill badge courses on Google Skills, earn a badge, then share your  achievements with peers and employers.
+</p>
+<a slot="body" class="ql-body-medium" href="/catalog?skill-badge=skill-badge">Explore skill badges</a>
+</ql-accordion-section>
+<ql-accordion-section>
+<h3 class='ql-title-large' role='heading' slot='header'>
+Prove your expertise with certifications
+</h3>
+<p class='ql-body-large' slot='body'>
+Validate your knowledge and skills with industry-recognized Google Cloud certifications. Prove your ability to solve real-world business challenges with  Google Cloud. The certification process involves passing a proctored exam.
+</p>
+<a class='ql-body-medium' href='https://cloud.google.com/learn/certification' slot='body' target='_blank'>
+Explore certifications
+</a>
+</ql-accordion-section>
+</ql-accordion>
+</section>
+
+<div class='guest-front-door-block msg-body'>
+<div class='guest-front-door-logo'>
+<img role="presentation" src="https://cdn.qwiklabs.com/assets/superG-3f3bd33cd9789294ae2ac66638b239c5395ae4b1.svg" />
+</div>
+<h2 class='ql-display-medium'><strong>Start building</strong> your tomorrow, today</h2>
+<span class='ql-body-large'>Whether you’re all-in on AI, just want to brush up on the latest, or you’re here to skill up your team — get ready for the latest innovations with the technical experts behind Google Skills.</span>
+<ql-button href='/users/sign_up'>
+Get started
+</ql-button>
+</div>
+</ql-floating-nav-bar-container>
+<ql-dialog id='video-modal-rP4FK0XGo38' noDefaultAction>
+<iframe allowfullscreen src='https://www.youtube.com/embed/rP4FK0XGo38'></iframe>
+</ql-dialog>
+<script>
+  // Refresh video once dialog is dismissed (so video stops playing in background
+  // and is reset to beginning for next dialog open)
+  {
+    const videoModal = document.querySelector('[id="video-modal-rP4FK0XGo38"]');
+    if (videoModal) {
+      videoModal.addEventListener('dialogDismissed', () => {
+        videoModal.getElementsByTagName('iframe')[0].src += '';
+      });
+    }
+  }
+</script>
+
+</div>
+
+</main>
+
+<footer slot='drawer-content'>
+<nav ariaLabel='Footer navigation' class='application-footer relaunch-extra'>
+
+<div class='footer-container'>
+<div class='footer-logo'>
+<a class="custom-logo" aria-label="Google Skills" href="/"><div class="custom-logo"><img alt="Google Skills" height="24" aria-label="Google Skills" src="https://cdn.qwiklabs.com/lqJbxogu4tSLez1OvjDcIO8rwow6cPLwvrfIdmQLf6U%3D" /></div></a>
+</div>
+<div class='footer-row'>
+<a href="/">Home</a>
+<a href="/catalog">Catalog</a>
+<a href="/paths">Paths</a>
+<a href="/subscriptions">Subscriptions</a>
+<a href="/profile/stay_on_track">Activities</a>
+<a href="/profile/badges">Achievements</a>
+<a href="/my_account/profile">Settings</a>
+<a href="/users/sign_in">Sign in or Join</a>
+</div>
+<div class='footer-row'>
+<a class="g-cloud-youtube" target="_blank" rel="noopener" href="https://www.youtube.com/@googlecloud"><ql-icon icon='video_youtube'></ql-icon>
+Youtube
+</a><a rel="noopener" onclick="hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:null},&quot;context&quot;:&quot;&quot;}); return false;" href="/help">Help Center</a>
+<a href="/terms_of_service">Terms</a>
+<a target="_blank" href="/privacy_policy">Privacy</a>
+<a aria-hidden='true' class='glue-cookie-notification-bar-control'>
+Manage cookies
+</a>
+</div>
+</div>
+
+</nav>
+</footer>
+</div>
+</div>
+</div>
+
+
+<span class='hidden' id='flash-sibling-before'></span>
+<ql-snackbar></ql-snackbar>
+
+<script data-glue-cookie-notification-bar-category='2A' src='https://www.gstatic.com/glue/cookienotificationbar/cookienotificationbar.min.js'></script>
+
+
+
+
+
+<script>
+  document.addEventListener("turbo:load", function () {
+    ql.initMaterialInputs();
+    ql.tomSelect.init();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    Turbo.session.drive = false;
+    ql.filter.filter.handleSearchInput(false);
+  (new ql.searchAutocomplete()).init({forHeader: false, topSuggestions: [{"label":"machine learning"},{"label":"cloud architecture"},{"label":"generative ai"},{"label":"data analyst"},{"label":"security fundamentals"}]});
+  ql.frontDoor.init();
+  ql.searchHeader.init({isRelaunch: true});
+  (new ql.searchAutocomplete()).init({forHeaderNew: true, topSuggestions: [{"label":"machine learning"},{"label":"cloud architecture"},{"label":"generative ai"},{"label":"data analyst"},{"label":"security fundamentals"}]});
+  ql.mobileOverflowMenu.init();
+  ql.messages.init();
+  ql.jumpContent.init();
+  
+  }, {once: true});
+</script>
+<script>
+  document.addEventListener("turbo:load", () => ql.analyticsV2.init(), {once: true});
+  document.addEventListener("turbo:frame-load", () => ql.analyticsV2.init(), {once: true});
+</script>
+<script>
+  document.addEventListener("turbo:load", function () {
+    ql.celebrations.init({"course_complete":"COURSE COMPLETED","document_complete":"DOCUMENT COMPLETED","experience_label":"Experience points","lab_complete":"LAB COMPLETED","learning_plan_complete":"PATH COMPLETED","lesson_complete":"LESSON COMPLETED","quiz_complete":"QUIZ COMPLETED","video_complete":"VIDEO COMPLETED"});
+    ql.achievements.init();
+  }, {once: true});
+</script>
+
+</body>
+</html>
+
+

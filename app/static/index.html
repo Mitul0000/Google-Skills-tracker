@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn With Communities | Skill Badge Tracker</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="logo-badge">GDG</span>
+        <h1>Learn With Communities — Skill Badge Tracker</h1>
+      </div>
+      <div>
+        <button id="clear-data-btn" class="btn btn-secondary" title="Delete all session data immediately">Clear My Data</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Notice Banner -->
+    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+      🔒 Your data is kept in SQLite for up to 2 hours after your last activity. Profiles are validated directly from public Google Skills URLs.
+    </div>
+
+    <!-- Upload Card -->
+    <div class="card" id="upload-card">
+      <h2 style="font-size: 18px; margin-bottom: 12px;">Upload Participant Profiles CSV</h2>
+      <div class="dropzone" id="dropzone">
+        <div class="upload-icon">📁</div>
+        <p style="font-weight: 500; font-size: 16px;">Drag & Drop your CSV file here, or click to browse</p>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">
+          Max 1,000 rows, up to 2 MB. Columns: <code>Google Skills Profile URL,[INFO]</code>
+        </p>
+        <input type="file" id="file-input" accept=".csv" style="display: none;">
+      </div>
+
+      <div class="error-banner" id="upload-error"></div>
+
+      <div class="upload-actions">
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <label class="checkbox-label">
+            <input type="checkbox" id="force-rescan-checkbox">
+            <span>Force full re-scan (ignore cached results)</span>
+          </label>
+          <a href="#" id="download-sample-link" style="font-size: 13px; color: var(--primary);">Download sample CSV</a>
+        </div>
+        <button id="start-scan-btn" class="btn btn-primary" disabled>Start Verification</button>
+      </div>
+    </div>
+
+    <!-- Progress Card -->
+    <div class="card progress-container" id="progress-card">
+      <div class="progress-header">
+        <div>
+          <h2 style="font-size: 18px;">Verifying Badges in Real-Time</h2>
+          <div style="font-size: 13px; color: var(--text-muted);" id="progress-subtext" aria-live="polite">0 of 0 profiles checked</div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span id="speed-label" style="font-size: 13px; font-weight: 500;">0 req/s</span>
+          <span id="eta-label" style="font-size: 13px; color: var(--text-muted);">ETA: --</span>
+          <button id="cancel-scan-btn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;">Cancel</button>
+        </div>
+      </div>
+
+      <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="counters-grid">
+        <div class="counter-box">
+          <div class="counter-val" id="cnt-complete" style="color: var(--success);">0</div>
+          <div class="counter-label">Complete (10/10)</div>
+        </div>
+        <div class="counter-box">
+          <div class="counter-val" id="cnt-partial" style="color: var(--warning);">0</div>
+          <div class="counter-label">Partial (1-9)</div>
+        </div>
+        <div class="counter-box">
+          <div class="counter-val" id="cnt-none" style="color: var(--error);">0</div>
+          <div class="counter-label">None (0/10)</div>
+        </div>
+        <div class="counter-box">
+          <div class="counter-val" id="cnt-private" style="color: var(--private-color);">0</div>
+          <div class="counter-label">Private</div>
+        </div>
+        <div class="counter-box">
+          <div class="counter-val" id="cnt-cache" style="color: var(--primary);">0</div>
+          <div class="counter-label">From Cache</div>
+        </div>
+        <div class="counter-box">
+          <div class="counter-val" id="cnt-errors" style="color: var(--error);">0</div>
+          <div class="counter-label">Errors</div>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; font-weight: 600; margin-bottom: 6px;">Live Activity Feed:</div>
+      <div class="live-feed-box" id="live-feed">
+        <div style="color: var(--text-muted);">Waiting for scan to start...</div>
+      </div>
+    </div>
+
+    <!-- Results Dashboard Card -->
+    <div class="card" id="dashboard-card" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+        <h2 style="font-size: 20px;">Results Dashboard</h2>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="/api/report.csv" id="btn-export-csv" class="btn btn-primary" download>📥 Download Report (CSV)</a>
+          <a href="/api/report.json" id="btn-export-json" class="btn btn-secondary" download>JSON Export</a>
+          <button id="btn-rescan" class="btn btn-secondary">🔄 Re-scan</button>
+        </div>
+      </div>
+
+      <!-- Summary Strip -->
+      <div class="summary-strip">
+        <div class="summary-card">
+          <div style="font-size: 24px; font-weight: 700;" id="sum-total">0</div>
+          <div style="font-size: 13px; color: var(--text-muted);">Total Rows</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 24px; font-weight: 700;" id="sum-unique">0</div>
+          <div style="font-size: 13px; color: var(--text-muted);">Unique Profiles</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 24px; font-weight: 700; color: var(--success);" id="sum-rate">0%</div>
+          <div style="font-size: 13px; color: var(--text-muted);">Completion Rate</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 24px; font-weight: 700;" id="sum-avg">0.0</div>
+          <div style="font-size: 13px; color: var(--text-muted);">Average Score</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 24px; font-weight: 700; color: var(--private-color);" id="sum-private">0</div>
+          <div style="font-size: 13px; color: var(--text-muted);">Private Profiles</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 24px; font-weight: 700; color: var(--error);" id="sum-failed">0</div>
+          <div style="font-size: 13px; color: var(--text-muted);">Failed Rows</div>
+        </div>
+      </div>
+
+      <!-- Chart and Legend -->
+      <div class="chart-section">
+        <div id="chart-container" style="width: 260px; height: 260px;"></div>
+        <div class="chart-legend" id="chart-legend"></div>
+      </div>
+
+      <!-- Search and Filter Bar -->
+      <div style="display: flex; gap: 12px; margin: 24px 0 16px 0; flex-wrap: wrap;">
+        <input type="text" id="global-search" placeholder="Search by name, UUID or badge..." style="flex: 1; min-width: 200px; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 14px;">
+        <label class="checkbox-label" style="background: var(--bg-color); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+          <input type="checkbox" id="filter-changed-only">
+          <span>Show only changed scores</span>
+        </label>
+      </div>
+
+      <!-- Per Score Buckets (10 down to 0, plus Private & Errors) -->
+      <div id="buckets-container"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div style="max-width: 900px; margin: 0 auto;">
+      <h3 style="font-size: 15px; margin-bottom: 8px;" id="campaign-title">Required Badges (Learn With Communities)</h3>
+      <p style="margin-bottom: 12px;">Only verified badges from this list count towards the 10/10 target:</p>
+      <div id="badges-footer-list" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px;"></div>
+    </div>
+  </footer>
+
+  <script src="/static/charts.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

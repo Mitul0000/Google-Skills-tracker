@@ -1,0 +1,16 @@
+{
+  "campaign_name": "Learn With Communities",
+  "required_total": 10,
+  "badges": [
+    "Explore Generative AI in Agent Platform",
+    "Store, Process, and Manage Data on Google Cloud - Console",
+    "Using the Google Cloud Speech API",
+    "Create Your First Gemini Enterprise Application",
+    "Build a Website on Google Cloud",
+    "Analyze Images with the Cloud Vision API",
+    "Develop AI-Powered Prototypes in Google AI Studio",
+    "Implement Speech and Language Solutions with Pre-trained APIs",
+    "Configure Service Accounts and IAM Roles for Google Cloud",
+    "The Basics of Google Cloud Compute"
+  ]
+}
