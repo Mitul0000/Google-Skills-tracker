@@ -2,7 +2,6 @@
 
 [![Live App](https://img.shields.io/badge/Live_App-skills.digifello.dev-blue)](https://skills.digifello.dev)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-brightgreen.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A high-performance, respectful verification tool built for organizers of the Google Developer Group (GDG) **"Learn With Communities"** campaign.
 
@@ -201,9 +200,3 @@ Required badges are defined in `required_badges.json`.
 | `MAX_ROWS_PER_UPLOAD` | `1000` | Maximum rows allowed per CSV upload |
 | `MAX_UPLOAD_SIZE_BYTES` | `2097152` | Maximum upload size in bytes (2 MB) |
 | `MOCK_FETCH` | `0` | Enable mock fixture fetching (`1` to enable) |
-
----
-
-## License
-
-This project is open-source under the [MIT License](LICENSE).
