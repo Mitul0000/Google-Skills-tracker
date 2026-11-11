@@ -1,33 +1,35 @@
 :root {
-  --primary: #1a73e8;
-  --primary-hover: #1557b0;
-  --bg-color: #f8f9fa;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg-color: #f7f8fa;
   --card-bg: #ffffff;
-  --text-main: #202124;
-  --text-muted: #5f6368;
-  --border-color: #dadce0;
+  --text-main: #181a21;
+  --text-muted: #686e7e;
+  --border-color: #d8dbe4;
   --success: #1e8e3e;
-  --warning: #f9ab00;
-  --error: #d93025;
-  --private-color: #7b1fa2;
-  --radius: 10px;
-  --shadow: 0 1px 3px rgba(60,64,67,0.1), 0 4px 8px rgba(60,64,67,0.05);
+  --warning: #f59e0b;
+  --error: #e11d48;
+  --private-color: #8b5cf6;
+  --digifello-accent: #2563eb;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.03);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary: #8ab4f8;
-    --primary-hover: #aecbfa;
-    --bg-color: #202124;
-    --card-bg: #292a2d;
-    --text-main: #e8eaed;
-    --text-muted: #9aa0a6;
-    --border-color: #3c4043;
-    --success: #81c995;
-    --warning: #fdd663;
-    --error: #f28b82;
-    --private-color: #d7aefb;
-    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --primary: #3b9eff;
+    --primary-hover: #298beb;
+    --bg-color: #1f2028;
+    --card-bg: #262833;
+    --text-main: #f4f5f7;
+    --text-muted: #9a9fb0;
+    --border-color: #3d4050;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --error: #fb7185;
+    --private-color: #c084fc;
+    --digifello-accent: #3b9eff;
+    --shadow: 0 4px 20px rgba(0,0,0,0.3);
   }
 }
 
@@ -66,17 +68,40 @@ header {
 }
 
 .logo-badge {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), #6366f1);
   color: #fff;
   font-weight: 700;
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+.brand-byline {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.brand-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.brand-link:hover {
+  text-decoration: underline;
+  opacity: 0.9;
 }
 
 h1 {
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 600;
+  letter-spacing: -0.2px;
 }
 
 .container {
