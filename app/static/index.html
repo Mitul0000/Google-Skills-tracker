@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Learn With Communities | Skill Badge Tracker</title>
-  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/styles.css?v=2.1">
 </head>
 <body>
   <header>
@@ -42,21 +42,21 @@
           <div class="step-num">Step 1</div>
           <div class="info-item-title">Upload Profile CSV</div>
           <div class="info-item-desc">
-            Upload a CSV containing participants' public Google Skills profile URLs. The system normalizes URLs, preserves original row order, and filters out duplicates for network efficiency.
+            Upload your CSV list with <strong>public Google Skills profile URLs</strong>. The tracker automatically <strong>normalizes URLs</strong>, <strong>preserves original input order</strong>, and <strong>de-duplicates</strong> requests to optimize network usage.
           </div>
         </div>
         <div class="info-item">
           <div class="step-num">Step 2</div>
           <div class="info-item-title">Live Verification Engine</div>
           <div class="info-item-desc">
-            The scraper inspects public profile markup, verifying each earned badge against required campaign badges using strict title normalization, date checking, and profile ownership validation.
+            The scanner fetches public profile markup, matching earned badges against the <strong>10 required campaign badges</strong> using <strong>strict title normalization</strong>, <strong>completion date verification</strong>, and <strong>ownership checks</strong>.
           </div>
         </div>
         <div class="info-item">
           <div class="step-num">Step 3</div>
           <div class="info-item-title">Real-Time Streaming & Reporting</div>
           <div class="info-item-desc">
-            Progress streams live via Server-Sent Events (SSE). Results are categorized into score buckets (10/10 down to 0/10), with downloadable reports in CSV and JSON formats.
+            Track live progress with <strong>Server-Sent Events (SSE)</strong>. Results are organized into score tiers (<strong>10/10 target down to 0/10</strong>) and available for immediate export as <strong>CSV and JSON</strong> reports.
           </div>
         </div>
       </div>
@@ -71,21 +71,21 @@
           <div class="feature-tag">Reliability</div>
           <div class="info-item-title">Polite Rate Limiting & AIMD</div>
           <div class="info-item-desc">
-            Built-in token bucket rate limiting (8 req/s) with concurrency caps, exponential backoff, and adaptive slow-down to respect platform bandwidth.
+            Built-in <strong>token bucket rate limiting (8 req/s)</strong> with concurrency controls, <strong>exponential backoff</strong>, and <strong>adaptive AIMD slow-down</strong> to strictly respect Google Skills platform limits.
           </div>
         </div>
         <div class="info-item">
           <div class="feature-tag">Performance</div>
           <div class="info-item-title">Intelligent Caching</div>
           <div class="info-item-desc">
-            Completed 10/10 profiles are cached to avoid redundant fetches on re-uploads, while partial or private profiles are automatically re-checked.
+            Verified <strong>10/10 profiles are cached</strong> to eliminate redundant re-scans across uploads, while incomplete or private profiles are <strong>automatically re-evaluated</strong>.
           </div>
         </div>
         <div class="info-item">
           <div class="feature-tag">Security</div>
           <div class="info-item-title">Privacy & Injection Protection</div>
           <div class="info-item-desc">
-            No permanent accounts or tracking. Ephemeral SQLite storage expires after 2 hours of inactivity, and CSV export defends against formula injection attacks.
+            Zero permanent tracking. <strong>Ephemeral SQLite storage</strong> auto-expires after 2 hours of inactivity, and CSV downloads feature <strong>built-in formula injection defenses</strong>.
           </div>
         </div>
       </div>

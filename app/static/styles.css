@@ -204,7 +204,12 @@ h1 {
 .info-item-desc {
   font-size: 13px;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.6;
+}
+
+.info-item-desc strong {
+  color: var(--text-main);
+  font-weight: 600;
 }
 
 /* Upload zone */
