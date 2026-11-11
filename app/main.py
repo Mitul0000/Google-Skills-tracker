@@ -17,7 +17,7 @@ from fastapi import (
     Query,
     status,
 )
-from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
+from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import config
@@ -92,6 +92,22 @@ async def check_session_api_rate(session_hash: str) -> None:
             )
         timestamps.append(now)
         _session_request_timestamps[session_hash] = timestamps
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon_ico():
+    ico_file = static_dir / "favicon.ico"
+    if ico_file.is_file():
+        return FileResponse(str(ico_file), media_type="image/x-icon")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.get("/favicon.png", include_in_schema=False)
+async def favicon_png():
+    png_file = static_dir / "favicon.png"
+    if png_file.is_file():
+        return FileResponse(str(png_file), media_type="image/png")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get("/", response_class=HTMLResponse)
