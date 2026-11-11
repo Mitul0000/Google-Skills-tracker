@@ -20,6 +20,7 @@ const clearDataBtn = document.getElementById("clear-data-btn");
 const downloadSampleLink = document.getElementById("download-sample-link");
 const globalSearchInput = document.getElementById("global-search");
 const filterChangedOnly = document.getElementById("filter-changed-only");
+const hideEmptyCheckbox = document.getElementById("hide-empty");
 
 // Counters
 const cntComplete = document.getElementById("cnt-complete");
@@ -384,12 +385,16 @@ function renderBuckets() {
 
   const searchTerm = (globalSearchInput.value || "").toLowerCase().trim();
   const changedOnly = filterChangedOnly.checked;
+  const hideEmpty = hideEmptyCheckbox ? hideEmptyCheckbox.checked : true;
 
   const totalProfiles = resultsData.summary.unique_profiles || 1;
 
   // 1. Render Score Buckets 10 down to 0
   for (let score = 10; score >= 0; score--) {
     const items = filterItems(resultsData.by_score[score] || [], searchTerm, changedOnly);
+    if (hideEmpty && items.length === 0) {
+      continue;
+    }
     const bucketEl = createBucketSection(
       `score-${score}`,
       `${score} of 10 Badges Completed`,
@@ -402,26 +407,30 @@ function renderBuckets() {
 
   // 2. Private Section
   const privateItems = filterItems(resultsData.private || [], searchTerm, changedOnly);
-  const privEl = createBucketSection(
-    "section-private",
-    "Private / Inaccessible Profiles",
-    privateItems,
-    Charts.colors.private,
-    totalProfiles
-  );
-  container.appendChild(privEl);
+  if (!hideEmpty || privateItems.length > 0) {
+    const privEl = createBucketSection(
+      "section-private",
+      "Private / Inaccessible Profiles",
+      privateItems,
+      Charts.colors.private,
+      totalProfiles
+    );
+    container.appendChild(privEl);
+  }
 
   // 3. Errors Section
   const errorItems = filterItems(resultsData.errors || [], searchTerm, changedOnly);
-  const errEl = createBucketSection(
-    "section-errors",
-    "Errors (Could Not Check)",
-    errorItems,
-    Charts.colors.errors,
-    totalProfiles,
-    true // isError
-  );
-  container.appendChild(errEl);
+  if (!hideEmpty || errorItems.length > 0) {
+    const errEl = createBucketSection(
+      "section-errors",
+      "Errors (Could Not Check)",
+      errorItems,
+      Charts.colors.errors,
+      totalProfiles,
+      true // isError
+    );
+    container.appendChild(errEl);
+  }
 }
 
 function filterItems(items, term, changedOnly) {
@@ -539,7 +548,7 @@ function createBucketSection(id, title, items, color, totalCount, isError = fals
                 ${scoreDiffHtml}
               </td>
               <td style="max-width: 450px;">
-                ${p.score === 10 ? '<span style="color: var(--success); font-weight:600;">All 10 verified! 🎉</span>' : (missingTags || "None")}
+                ${p.score === 10 ? '<span style="color: var(--success); font-weight:600;">All 10 verified!</span>' : (missingTags || "None")}
               </td>
             </tr>
           `;
@@ -580,6 +589,9 @@ function toggleBucket(bucketEl) {
 // Global search and filter listener
 globalSearchInput.addEventListener("input", () => renderBuckets());
 filterChangedOnly.addEventListener("change", () => renderBuckets());
+if (hideEmptyCheckbox) {
+  hideEmptyCheckbox.addEventListener("change", () => renderBuckets());
+}
 
 // Re-scan Button
 document.getElementById("btn-rescan").addEventListener("click", () => {

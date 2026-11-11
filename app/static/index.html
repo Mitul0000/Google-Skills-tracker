@@ -22,7 +22,7 @@
   <main class="container">
     <!-- Notice Banner -->
     <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-      🔒 Your data is kept in SQLite for up to 2 hours after your last activity. Profiles are validated directly from public Google Skills URLs.
+      Your data is kept in SQLite for up to 2 hours after your last activity. Profiles are validated directly from public Google Skills URLs.
     </div>
 
     <!-- Upload Card -->
@@ -148,8 +148,12 @@
       </div>
 
       <!-- Search and Filter Bar -->
-      <div style="display: flex; gap: 12px; margin: 24px 0 16px 0; flex-wrap: wrap;">
+      <div style="display: flex; gap: 12px; margin: 24px 0 16px 0; flex-wrap: wrap; align-items: center;">
         <input type="text" id="global-search" placeholder="Search by name, UUID or badge..." style="flex: 1; min-width: 200px; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 14px;">
+        <label class="checkbox-label" style="background: var(--bg-color); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+          <input type="checkbox" id="hide-empty" checked>
+          <span>Hide empty sections (0%)</span>
+        </label>
         <label class="checkbox-label" style="background: var(--bg-color); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
           <input type="checkbox" id="filter-changed-only">
           <span>Show only changed scores</span>
