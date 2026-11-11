@@ -131,7 +131,7 @@ h1 {
 
 /* Features and How It Works */
 .info-card {
-  border-top: 3px solid var(--primary);
+  /* No top border */
 }
 
 .info-section-header h2 {
@@ -165,7 +165,7 @@ h1 {
 }
 
 .info-item:hover {
-  border-color: var(--primary);
+  border-color: #ffffff;
 }
 
 .step-num {
