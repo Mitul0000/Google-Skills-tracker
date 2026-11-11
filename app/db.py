@@ -50,6 +50,18 @@ async def init_db() -> None:
 
                 CREATE INDEX IF NOT EXISTS idx_scans_session_id ON scans(session_id_hash);
 
+                CREATE TABLE IF NOT EXISTS scan_rows (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    session_id_hash TEXT NOT NULL,
+                    row_order INTEGER NOT NULL,
+                    raw_url TEXT NOT NULL,
+                    canonical_url TEXT,
+                    uuid TEXT,
+                    FOREIGN KEY (session_id_hash) REFERENCES sessions(id_hash) ON DELETE CASCADE
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_scan_rows_session ON scan_rows(session_id_hash, row_order);
+
                 CREATE TABLE IF NOT EXISTS profiles (
                     session_id_hash TEXT NOT NULL,
                     uuid TEXT NOT NULL,
@@ -72,4 +84,7 @@ async def init_db() -> None:
                 CREATE INDEX IF NOT EXISTS idx_profiles_session_order ON profiles(session_id_hash, row_order);
                 """
             )
+            # Startup cleanup: Reset any stuck 'running' sessions to 'idle'
+            await conn.execute("UPDATE sessions SET scan_state = 'idle' WHERE scan_state = 'running'")
+            await conn.execute("UPDATE scans SET state = 'cancelled' WHERE state = 'running'")
             await conn.commit()

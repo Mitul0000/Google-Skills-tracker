@@ -29,6 +29,7 @@ class TokenBucketLimiter:
         # AIMD Adaptive slow-down tracking
         self.recent_429_timestamps = []
         self.cooloff_until = 0.0
+        self.last_recovery_time = 0.0
 
     async def acquire(self) -> None:
         """
@@ -39,13 +40,20 @@ class TokenBucketLimiter:
                 now = time.monotonic()
 
                 # Check if in cooloff period; if cooloff expired, restore rate gradually
+                # (+1.0 req/sec per second of elapsed time, instead of per acquire call)
                 if self.cooloff_until > 0 and now >= self.cooloff_until:
                     if self.current_rate < self.base_rate:
-                        # Gradual recovery (+1.0 req/sec every restore check)
-                        self.current_rate = min(self.base_rate, self.current_rate + 1.0)
-                        logger.info(f"Limiter restoring rate to {self.current_rate:.1f} req/s")
+                        if self.last_recovery_time == 0.0:
+                            self.last_recovery_time = self.cooloff_until
+                        elapsed_since_recovery = now - self.last_recovery_time
+                        if elapsed_since_recovery >= 1.0:
+                            steps = int(elapsed_since_recovery)
+                            self.current_rate = min(self.base_rate, self.current_rate + steps * 1.0)
+                            self.last_recovery_time += steps
+                            logger.info(f"Limiter restoring rate to {self.current_rate:.1f} req/s")
                     if self.current_rate >= self.base_rate:
                         self.cooloff_until = 0.0
+                        self.last_recovery_time = 0.0
 
                 # Refill tokens
                 elapsed = now - self.last_refill
@@ -76,6 +84,7 @@ class TokenBucketLimiter:
             # Trigger adaptive slow-down
             self.current_rate = max(1.0, self.current_rate / 2.0)
             self.cooloff_until = now + 15.0
+            self.last_recovery_time = 0.0
             self.recent_429_timestamps.clear()
             logger.warning(
                 f"Adaptive slow-down triggered! Halved rate to {self.current_rate:.1f} req/s until {self.cooloff_until:.1f}"

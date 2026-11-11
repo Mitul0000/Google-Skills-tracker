@@ -3,6 +3,7 @@ import datetime
 import json
 import logging
 import time
+import uuid
 from contextlib import asynccontextmanager
 from typing import Optional, Dict, Any, List
 
@@ -45,7 +46,7 @@ cleanup_task: Optional[asyncio.Task] = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Startup: Initialize DB and reset any orphan 'running' scans to 'idle'
     logger.info("Initializing database...")
     await init_db()
     global cleanup_task
@@ -139,21 +140,7 @@ async def upload_csv(
     raw_token, session_hash, _ = await get_or_create_session(request, response)
     await check_session_api_rate(session_hash)
 
-    # 1. Check if scan already running for this session (Rule: 1 running scan per session -> 409)
-    async with get_db() as conn:
-        s_row = await conn.execute_fetchall(
-            "SELECT scan_state FROM sessions WHERE id_hash = ?", (session_hash,)
-        )
-        if s_row and s_row[0]["scan_state"] == "running":
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail={
-                    "error": "scan_in_progress",
-                    "message": "A scan is already running for this session.",
-                },
-            )
-
-    # 2. Check upload size cap (MAX_UPLOAD_SIZE_BYTES = 2MB)
+    # 1. Check upload size cap (MAX_UPLOAD_SIZE_BYTES = 2MB)
     content = await file.read()
     if len(content) == 0:
         raise HTTPException(
@@ -169,7 +156,7 @@ async def upload_csv(
             },
         )
 
-    # 3. Parse CSV rows
+    # 2. Parse CSV rows
     parsed_rows = parse_csv_upload(content)
     if not parsed_rows:
         raise HTTPException(
@@ -180,7 +167,7 @@ async def upload_csv(
             },
         )
 
-    # 4. Check row cap (MAX_ROWS_PER_UPLOAD = 1000)
+    # 3. Check row cap (MAX_ROWS_PER_UPLOAD = 1000)
     if len(parsed_rows) > config.MAX_ROWS_PER_UPLOAD:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -190,8 +177,38 @@ async def upload_csv(
             },
         )
 
+    # 4. Atomic check-and-set running scan for this session
+    now = time.time()
+    scan_id = f"scan-{uuid.uuid4()}"
+    async with get_db() as conn:
+        cursor = await conn.execute(
+            """
+            UPDATE sessions 
+            SET scan_state = 'running', scan_started_at = ?
+            WHERE id_hash = ? AND scan_state != 'running'
+            """,
+            (now, session_hash),
+        )
+        if cursor.rowcount == 0:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "error": "scan_in_progress",
+                    "message": "A scan is already running for this session.",
+                },
+            )
+
+        unique_uuids = set(uid for _, _, uid in parsed_rows if uid is not None)
+        await conn.execute(
+            """
+            INSERT INTO scans (id, session_id_hash, total, done, started_at, state)
+            VALUES (?, ?, ?, 0, ?, 'running')
+            """,
+            (scan_id, session_hash, len(unique_uuids), now),
+        )
+        await conn.commit()
+
     # 5. Check cache vs to_fetch
-    unique_uuids = set(uid for _, _, uid in parsed_rows if uid is not None)
     cached_uuids = set()
     req_badges = load_required_badges()
 
@@ -210,27 +227,6 @@ async def upload_csv(
 
     to_fetch_count = len(unique_uuids) - len(cached_uuids)
     invalid_count = sum(1 for _, _, uid in parsed_rows if uid is None)
-
-    # Update session scan state in DB
-    now = time.time()
-    scan_id = f"scan-{int(now)}"
-    async with get_db() as conn:
-        await conn.execute(
-            """
-            UPDATE sessions 
-            SET scan_state = 'running', scan_started_at = ?
-            WHERE id_hash = ?
-            """,
-            (now, session_hash),
-        )
-        await conn.execute(
-            """
-            INSERT INTO scans (id, session_id_hash, total, done, started_at, state)
-            VALUES (?, ?, ?, 0, ?, 'running')
-            """,
-            (scan_id, session_hash, len(unique_uuids), now),
-        )
-        await conn.commit()
 
     # Launch background scan orchestration
     task = asyncio.create_task(
@@ -255,13 +251,11 @@ async def progress_stream(request: Request, response: Response):
 
     async def event_generator():
         try:
-            # If there's an active or last known progress, send it immediately
             if session_hash in scan_manager.last_progress:
                 lp = scan_manager.last_progress[session_hash]
                 yield f"event: progress\ndata: {json.dumps(lp)}\n\n"
 
             while True:
-                # Disconnect detection
                 if await request.is_disconnected():
                     break
                 try:
@@ -272,7 +266,6 @@ async def progress_stream(request: Request, response: Response):
                     if evt == "complete":
                         break
                 except asyncio.TimeoutError:
-                    # Keep-alive comment
                     yield ": ping\n\n"
         finally:
             scan_manager.unregister_queue(session_hash, queue)
@@ -311,22 +304,17 @@ async def cancel_scan(request: Request, response: Response):
     _, session_hash, _ = await get_or_create_session(request, response)
     await check_session_api_rate(session_hash)
 
+    # Signal the cancel event to workers
     if session_hash in scan_manager.cancel_events:
         scan_manager.cancel_events[session_hash].set()
 
-    async with get_db() as conn:
-        await conn.execute(
-            "UPDATE sessions SET scan_state = 'idle' WHERE id_hash = ?",
-            (session_hash,),
-        )
-        await conn.execute(
-            """
-            UPDATE scans SET state = 'cancelled', finished_at = ?
-            WHERE session_id_hash = ? AND state = 'running'
-            """,
-            (time.time(), session_hash),
-        )
-        await conn.commit()
+    # Wait for the running worker task to finish cleanly if active
+    task = scan_manager.active_tasks.get(session_hash)
+    if task and not task.done():
+        try:
+            await asyncio.wait_for(asyncio.shield(task), timeout=2.0)
+        except (asyncio.TimeoutError, Exception):
+            pass
 
     return {"status": "cancelled"}
 
@@ -336,20 +324,20 @@ async def get_results(request: Request, response: Response):
     _, session_hash, _ = await get_or_create_session(request, response)
     await check_session_api_rate(session_hash)
 
+    # Results dashboard is constructed from profiles joined or ordered by scan_rows
     async with get_db() as conn:
         rows = await conn.execute_fetchall(
             """
-            SELECT uuid, url, status, score, verified_badges, other_badges,
-                   missing_badges, profile_name, error_reason, prev_score,
-                   last_checked_at, row_order
-            FROM profiles
-            WHERE session_id_hash = ?
-            ORDER BY row_order ASC
+            SELECT p.uuid, p.url, p.status, p.score, p.verified_badges, p.other_badges,
+                   p.missing_badges, p.profile_name, p.error_reason, p.prev_score,
+                   p.last_checked_at, p.row_order
+            FROM profiles p
+            WHERE p.session_id_hash = ?
+            ORDER BY p.row_order ASC
             """,
             (session_hash,),
         )
 
-    # Group results by score (10 down to 0) plus private and errors
     by_score: Dict[int, List[Dict[str, Any]]] = {i: [] for i in range(10, -1, -1)}
     private_list: List[Dict[str, Any]] = []
     errors_list: List[Dict[str, Any]] = []
@@ -414,30 +402,51 @@ async def download_report_csv(
     _, session_hash, _ = await get_or_create_session(request, response)
     await check_session_api_rate(session_hash)
 
+    # Build report from scan_rows joined to profiles so EVERY input row is preserved in original order
     async with get_db() as conn:
         rows = await conn.execute_fetchall(
             """
-            SELECT uuid, url, status, score, verified_badges, missing_badges,
-                   profile_name, error_reason, last_checked_at, row_order
-            FROM profiles
-            WHERE session_id_hash = ?
-            ORDER BY row_order ASC
+            SELECT sr.raw_url, sr.uuid,
+                   p.status, p.score, p.verified_badges, p.missing_badges,
+                   p.profile_name, p.error_reason, p.last_checked_at
+            FROM scan_rows sr
+            LEFT JOIN profiles p 
+              ON sr.session_id_hash = p.session_id_hash AND sr.uuid = p.uuid
+            WHERE sr.session_id_hash = ?
+            ORDER BY sr.row_order ASC
             """,
             (session_hash,),
         )
 
     row_dicts = []
     for r in rows:
-        row_dicts.append({
-            "url": r["url"],
-            "status": r["status"],
-            "score": r["score"],
-            "profile_name": r["profile_name"],
-            "missing_badges": json.loads(r["missing_badges"]),
-            "error_reason": r["error_reason"],
-            "last_checked_at": datetime.datetime.fromtimestamp(
+        uuid_val = r["uuid"]
+        if not uuid_val:
+            # Row was invalid
+            status_val = "invalid"
+            score_val = 0
+            name_val = None
+            missing_val = []
+            err_reason = "Invalid URL"
+            checked_time_str = ""
+        else:
+            status_val = r["status"] or "none"
+            score_val = r["score"] or 0
+            name_val = r["profile_name"]
+            missing_val = json.loads(r["missing_badges"]) if r["missing_badges"] else []
+            err_reason = r["error_reason"]
+            checked_time_str = datetime.datetime.fromtimestamp(
                 r["last_checked_at"]
-            ).strftime("%Y-%m-%d %H:%M:%S") if r["last_checked_at"] else "",
+            ).strftime("%Y-%m-%d %H:%M:%S") if r["last_checked_at"] else ""
+
+        row_dicts.append({
+            "url": r["raw_url"],
+            "status": status_val,
+            "score": score_val,
+            "profile_name": name_val,
+            "missing_badges": missing_val,
+            "error_reason": err_reason,
+            "last_checked_at": checked_time_str,
         })
 
     csv_bytes = generate_report_csv(
@@ -467,12 +476,15 @@ async def download_report_json(request: Request, response: Response):
     async with get_db() as conn:
         rows = await conn.execute_fetchall(
             """
-            SELECT uuid, url, status, score, verified_badges, other_badges,
-                   missing_badges, profile_name, error_reason, prev_score,
-                   last_checked_at, row_order
-            FROM profiles
-            WHERE session_id_hash = ?
-            ORDER BY row_order ASC
+            SELECT sr.raw_url, sr.uuid,
+                   p.status, p.score, p.verified_badges, p.other_badges,
+                   p.missing_badges, p.profile_name, p.error_reason, p.prev_score,
+                   p.last_checked_at
+            FROM scan_rows sr
+            LEFT JOIN profiles p 
+              ON sr.session_id_hash = p.session_id_hash AND sr.uuid = p.uuid
+            WHERE sr.session_id_hash = ?
+            ORDER BY sr.row_order ASC
             """,
             (session_hash,),
         )
@@ -480,15 +492,15 @@ async def download_report_json(request: Request, response: Response):
     results = []
     for r in rows:
         results.append({
+            "url": r["raw_url"],
             "uuid": r["uuid"],
-            "url": r["url"],
-            "status": r["status"],
-            "score": r["score"],
-            "verified_badges": json.loads(r["verified_badges"]),
-            "other_badges": json.loads(r["other_badges"]),
-            "missing_badges": json.loads(r["missing_badges"]),
+            "status": r["status"] if r["uuid"] else "invalid",
+            "score": r["score"] if r["uuid"] else 0,
+            "verified_badges": json.loads(r["verified_badges"]) if r["verified_badges"] else [],
+            "other_badges": json.loads(r["other_badges"]) if r["other_badges"] else [],
+            "missing_badges": json.loads(r["missing_badges"]) if r["missing_badges"] else [],
             "profile_name": r["profile_name"],
-            "error_reason": r["error_reason"],
+            "error_reason": r["error_reason"] if r["uuid"] else "Invalid URL",
             "prev_score": r["prev_score"],
             "last_checked_at": r["last_checked_at"],
         })
@@ -502,6 +514,11 @@ async def clear_session_data(request: Request, response: Response):
     # Cancel running scans if any
     if session_hash in scan_manager.cancel_events:
         scan_manager.cancel_events[session_hash].set()
+
+    # Clear memory maps
+    scan_manager.cleanup_session_memory(session_hash)
+    async with _session_rate_lock:
+        _session_request_timestamps.pop(session_hash, None)
 
     await delete_session(raw_token, response)
     return {"status": "cleared", "message": "All session data has been deleted."}

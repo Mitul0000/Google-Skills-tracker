@@ -70,13 +70,13 @@ def parse_profile_html(
     h1_el = tree.css_first("h1")
     h1_text = h1_el.text().strip() if h1_el else ""
 
-    # Known private markers:
-    # If the page redirected to homepage or shows public marketing landing:
-    # Title is "Google Skills" and H1 is "Build AI skills for tomorrow, today" or "Welcome"
+    # Known private / marketing landing markers:
+    # When a private profile URL is requested, Google redirects (302) to https://www.skills.google/
+    # whose title is "Google Skills" and H1 is "Build AI skills for tomorrow, today" or "Google Cloud Skills Boost"
     is_marketing_landing = (
         ("Build AI skills for tomorrow, today" in h1_text)
-        or ("Google Skills" in title_text and not h1_text)
         or (h1_text == "Google Cloud Skills Boost")
+        or (title_text == "Google Skills" and "Build AI skills" in (tree.css_first("body").text() if tree.css_first("body") else ""))
     )
     if is_marketing_landing:
         return ProfileScrapeResult(

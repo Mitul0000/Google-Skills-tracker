@@ -4,7 +4,7 @@ import logging
 import os
 import time
 from pathlib import Path
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Dict, Any, Optional, List, Tuple, Set
 import httpx
 
 from app import config
@@ -54,7 +54,7 @@ def get_http_client() -> httpx.AsyncClient:
                 "User-Agent": "GDG-LearnWithCommunities-Tracker/1.0 (+https://skills.google)",
                 "Accept-Encoding": "gzip",
             },
-            follow_redirects=False,  # We check 302 redirects for private detection
+            follow_redirects=True,  # Follow redirects to reach the canonical landing or profile page
         )
     return _shared_client
 
@@ -102,6 +102,13 @@ class ScanManager:
                 q.put_nowait({"event": event_type, "data": data})
             except Exception:
                 pass
+
+    def cleanup_session_memory(self, session_hash: str) -> None:
+        """Removes session from in-memory tracking maps to prevent unbounded memory growth."""
+        self.active_tasks.pop(session_hash, None)
+        self.cancel_events.pop(session_hash, None)
+        self.progress_queues.pop(session_hash, None)
+        self.last_progress.pop(session_hash, None)
 
 
 scan_manager = ScanManager()
@@ -171,7 +178,6 @@ async def fetch_profile_mock(uuid_str: str) -> ProfileScrapeResult:
     elif uuid_str == "f0633f18-fd81-4cc0-b375-1454da352885":
         fixture_file = fixtures_dir / "sample_random2.html"
     else:
-        # Default mock fixture
         fixture_file = fixtures_dir / "sample_zero.html"
 
     if fixture_file.is_file():
@@ -194,12 +200,12 @@ async def fetch_profile_live(uuid_str: str) -> ProfileScrapeResult:
     """
     Fetches and parses a single profile URL with token bucket rate limiting,
     concurrency control, retry logic, exponential backoff, and adaptive slowdown.
+    Follows redirects and inspects final landing/profile page.
     """
     url = f"https://www.skills.google/public_profiles/{uuid_str}"
     client = get_http_client()
     req_badges = load_required_badges()
 
-    last_status_code = None
     last_error_type = "network_error"
     last_error_msg = ""
 
@@ -211,20 +217,6 @@ async def fetch_profile_live(uuid_str: str) -> ProfileScrapeResult:
         async with global_limiter.semaphore:
             try:
                 resp = await client.get(url)
-
-                # Check for private profile redirect (302/301 to root or login)
-                if resp.status_code in (301, 302, 303, 307, 308):
-                    location = resp.headers.get("location", "")
-                    if location == "/" or "skills.google" in location or not location.endswith(uuid_str):
-                        return ProfileScrapeResult(
-                            uuid=uuid_str,
-                            status="private",
-                            score=0,
-                            verified_badges=[],
-                            other_badges=[],
-                            missing_badges=list(req_badges.badges),
-                            error_reason="Account which is now private",
-                        )
 
                 # Check for 404 / 403 / 410 -> Never retry, maps to private
                 if resp.status_code in (403, 404, 410):
@@ -240,14 +232,25 @@ async def fetch_profile_live(uuid_str: str) -> ProfileScrapeResult:
 
                 # Check for 200 OK
                 if resp.status_code == 200:
+                    # Check if final redirect landed on the marketing root rather than a profile
+                    final_url = str(resp.url).lower()
+                    if uuid_str.lower() not in final_url and (final_url.endswith(".google/") or final_url.endswith(".google")):
+                        return ProfileScrapeResult(
+                            uuid=uuid_str,
+                            status="private",
+                            score=0,
+                            verified_badges=[],
+                            other_badges=[],
+                            missing_badges=list(req_badges.badges),
+                            error_reason="Account which is now private",
+                        )
+
                     html = resp.text
-                    # Parse HTML
                     res = parse_profile_html(html, uuid_str, req_badges)
                     return res
 
                 # Check for retryable HTTP errors (429, 500, 502, 503, 504)
                 if resp.status_code in (429, 500, 502, 503, 504):
-                    last_status_code = resp.status_code
                     if resp.status_code == 429:
                         global_limiter.record_429()
                         last_error_type = "rate_limited"
@@ -351,83 +354,20 @@ async def orchestrate_scan(
 ) -> None:
     """
     Executes scan for a session:
+    - Stores the uploaded rows (position, raw URL, UUID) in scan_rows table
     - Diff against session cache
     - Queue workers
     - Save results into SQLite
     - Stream SSE progress and row events
+    - Guaranteed cleanup in try/finally
     """
     cancel_event = asyncio.Event()
     scan_manager.cancel_events[session_id_hash] = cancel_event
 
-    total_rows = len(parsed_rows)
     start_time = time.time()
-
-    # Load existing cached profiles for session
-    existing_profiles: Dict[str, Dict[str, Any]] = {}
-    async with get_db() as conn:
-        rows = await conn.execute_fetchall(
-            """
-            SELECT uuid, status, score, verified_badges, other_badges, missing_badges,
-                   profile_name, error_reason
-            FROM profiles
-            WHERE session_id_hash = ?
-            """,
-            (session_id_hash,),
-        )
-        for r in rows:
-            existing_profiles[r["uuid"]] = dict(r)
-
-    # Determine unique UUIDs in the new list
-    new_list_uuids = set(uid for _, _, uid in parsed_rows if uid is not None)
-
-    # Delete URLs in session but not in the new list (Re-upload rule)
-    async with get_db() as conn:
-        for old_uuid in list(existing_profiles.keys()):
-            if old_uuid not in new_list_uuids:
-                await conn.execute(
-                    "DELETE FROM profiles WHERE session_id_hash = ? AND uuid = ?",
-                    (session_id_hash, old_uuid),
-                )
-                del existing_profiles[old_uuid]
-        await conn.commit()
-
-    # Deduplicate unique UUIDs to fetch vs from_cache
-    # Re-upload behaviour:
-    # - complete (10/10) -> skip (mark from_cache) unless force_full_rescan
-    # - partial (1-9) or none (0) -> re-check
-    # - private -> re-check
-    # - any error -> re-check
-    # - new URL -> fetch
-    work_uuids: Set[str] = set()
-    cached_results: Dict[str, ProfileScrapeResult] = {}
-    req_badges = load_required_badges()
-
-    for _, _, uid in parsed_rows:
-        if not uid:
-            continue
-        if uid in existing_profiles and not force_full_rescan:
-            cached = existing_profiles[uid]
-            if cached["status"] == "complete" and cached["score"] == req_badges.required_total:
-                # Use cache
-                if uid not in cached_results:
-                    cached_results[uid] = ProfileScrapeResult(
-                        uuid=uid,
-                        status="complete",
-                        score=cached["score"],
-                        verified_badges=json.loads(cached["verified_badges"]),
-                        other_badges=json.loads(cached["other_badges"]),
-                        missing_badges=json.loads(cached["missing_badges"]),
-                        profile_name=cached["profile_name"],
-                        error_reason=None,
-                        from_cache=True,
-                    )
-                continue
-        work_uuids.add(uid)
-
-    to_fetch_count = len(work_uuids)
-    from_cache_count = len(cached_results)
-
-    # Status counts tracking
+    final_state = "error"
+    done_unique_count = 0
+    total_unique_count = 0
     status_counts = {
         "complete": 0,
         "partial": 0,
@@ -439,230 +379,271 @@ async def orchestrate_scan(
     }
     recent_errors: List[Dict[str, str]] = []
 
-    # Map for processed results
-    processed_results: Dict[str, ProfileScrapeResult] = dict(cached_results)
-    for c_res in cached_results.values():
-        status_counts["complete"] += 1
-        status_counts["from_cache"] += 1
-
-    # Work queue for profiles to fetch
-    queue: asyncio.Queue = asyncio.Queue()
-    for uid in work_uuids:
-        queue.put_nowait(uid)
-
-    done_unique_count = len(cached_results)
-    total_unique_count = len(work_uuids) + len(cached_results)
-
-    # Initial progress event
-    await scan_manager.broadcast(
-        session_id_hash,
-        "progress",
-        {
-            "done": done_unique_count,
-            "total": total_unique_count,
-            "percent": round(done_unique_count / max(1, total_unique_count) * 100, 1),
-            "counts": status_counts,
-            "current_rate": 0.0,
-            "eta_seconds": None,
-            "recent_errors": recent_errors,
-            "state": "running",
-        },
-    )
-
-    # Save initial invalid rows to database
-    now = time.time()
-    async with get_db() as conn:
-        for idx, (raw_url, can_url, uid) in enumerate(parsed_rows):
-            if uid is None:
-                # Invalid row
-                dummy_uid = f"invalid-{idx}"
+    try:
+        # 1. Record uploaded input rows in scan_rows table (replacing old scan_rows for this session)
+        async with get_db() as conn:
+            await conn.execute("DELETE FROM scan_rows WHERE session_id_hash = ?", (session_id_hash,))
+            for idx, (raw_url, can_url, uid) in enumerate(parsed_rows):
                 await conn.execute(
                     """
-                    INSERT OR REPLACE INTO profiles 
-                    (session_id_hash, uuid, url, status, score, verified_badges, other_badges,
-                     missing_badges, profile_name, error_reason, prev_score, last_checked_at, row_order)
-                    VALUES (?, ?, ?, 'invalid', 0, '[]', '[]', '[]', NULL, 'Invalid URL', NULL, ?, ?)
+                    INSERT INTO scan_rows (session_id_hash, row_order, raw_url, canonical_url, uuid)
+                    VALUES (?, ?, ?, ?, ?)
                     """,
-                    (session_id_hash, dummy_uid, raw_url, now, idx),
+                    (session_id_hash, idx, raw_url, can_url, uid),
                 )
-        await conn.commit()
+            await conn.commit()
 
-    # Emit row events for cached items
-    for uid, c_res in cached_results.items():
-        prev_score = existing_profiles[uid].get("prev_score") if uid in existing_profiles else None
+        # 2. Load existing cached profiles for session
+        existing_profiles: Dict[str, Dict[str, Any]] = {}
+        async with get_db() as conn:
+            rows = await conn.execute_fetchall(
+                """
+                SELECT uuid, status, score, verified_badges, other_badges, missing_badges,
+                       profile_name, error_reason
+                FROM profiles
+                WHERE session_id_hash = ?
+                """,
+                (session_id_hash,),
+            )
+            for r in rows:
+                existing_profiles[r["uuid"]] = dict(r)
+
+        # 3. Determine unique UUIDs in the new list and drop removed ones from cache
+        new_list_uuids = set(uid for _, _, uid in parsed_rows if uid is not None)
+        async with get_db() as conn:
+            for old_uuid in list(existing_profiles.keys()):
+                if old_uuid not in new_list_uuids:
+                    await conn.execute(
+                        "DELETE FROM profiles WHERE session_id_hash = ? AND uuid = ?",
+                        (session_id_hash, old_uuid),
+                    )
+                    del existing_profiles[old_uuid]
+            await conn.commit()
+
+        # 4. Deduplicate unique UUIDs to fetch vs from_cache
+        work_uuids: Set[str] = set()
+        cached_results: Dict[str, ProfileScrapeResult] = {}
+        req_badges = load_required_badges()
+
+        for _, _, uid in parsed_rows:
+            if not uid:
+                continue
+            if uid in existing_profiles and not force_full_rescan:
+                cached = existing_profiles[uid]
+                if cached["status"] == "complete" and cached["score"] == req_badges.required_total:
+                    if uid not in cached_results:
+                        cached_results[uid] = ProfileScrapeResult(
+                            uuid=uid,
+                            status="complete",
+                            score=cached["score"],
+                            verified_badges=json.loads(cached["verified_badges"]),
+                            other_badges=json.loads(cached["other_badges"]),
+                            missing_badges=json.loads(cached["missing_badges"]),
+                            profile_name=cached["profile_name"],
+                            error_reason=None,
+                            from_cache=True,
+                        )
+                    continue
+            work_uuids.add(uid)
+
+        for c_res in cached_results.values():
+            status_counts["complete"] += 1
+            status_counts["from_cache"] += 1
+
+        queue: asyncio.Queue = asyncio.Queue()
+        for uid in work_uuids:
+            queue.put_nowait(uid)
+
+        done_unique_count = len(cached_results)
+        total_unique_count = len(work_uuids) + len(cached_results)
+
+        # Initial progress event
         await scan_manager.broadcast(
             session_id_hash,
-            "row",
+            "progress",
             {
-                "uuid": uid,
-                "url": f"https://www.skills.google/public_profiles/{uid}",
-                "status": c_res.status,
-                "score": c_res.score,
-                "from_cache": True,
-                "profile_name": c_res.profile_name,
-                "prev_score": prev_score,
-                "error_reason": c_res.error_reason,
+                "done": done_unique_count,
+                "total": total_unique_count,
+                "percent": round(done_unique_count / max(1, total_unique_count) * 100, 1),
+                "counts": status_counts,
+                "current_rate": 0.0,
+                "eta_seconds": None,
+                "recent_errors": recent_errors,
+                "state": "running",
             },
         )
 
-    # Worker function
-    num_workers = min(config.MAX_CONCURRENCY, max(1, len(work_uuids)))
-    db_write_lock = asyncio.Lock()
-
-    async def worker():
-        nonlocal done_unique_count
-        while not queue.empty() and not cancel_event.is_set():
-            try:
-                uid = queue.get_nowait()
-            except asyncio.QueueEmpty:
-                break
-
-            prev_score = existing_profiles.get(uid, {}).get("score")
-            try:
-                res = await get_or_fetch_profile(uid)
-            except Exception as e:
-                res = ProfileScrapeResult(
-                    uuid=uid,
-                    status="network_error",
-                    score=0,
-                    verified_badges=[],
-                    other_badges=[],
-                    missing_badges=list(req_badges.badges),
-                    error_reason=str(e),
-                )
-
-            processed_results[uid] = res
-            done_unique_count += 1
-
-            # Update status counts
-            if res.status == "complete":
-                status_counts["complete"] += 1
-            elif res.status == "partial":
-                status_counts["partial"] += 1
-            elif res.status == "none":
-                status_counts["none"] += 1
-            elif res.status == "private":
-                status_counts["private"] += 1
-            else:
-                status_counts["errors"] += 1
-                recent_errors.append(
-                    {"uuid": uid, "reason": res.error_reason or res.status}
-                )
-                if len(recent_errors) > 10:
-                    recent_errors.pop(0)
-
-            # Persist to database
-            checked_time = time.time()
-            async with db_write_lock:
-                async with get_db() as conn:
-                    # Find order index for this uuid
-                    order_idx = next(
-                        (i for i, (_, _, u) in enumerate(parsed_rows) if u == uid), 0
-                    )
-                    await conn.execute(
-                        """
-                        INSERT OR REPLACE INTO profiles
-                        (session_id_hash, uuid, url, status, score, verified_badges, other_badges,
-                         missing_badges, profile_name, error_reason, prev_score, last_checked_at, row_order)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """,
-                        (
-                            session_id_hash,
-                            uid,
-                            f"https://www.skills.google/public_profiles/{uid}",
-                            res.status,
-                            res.score,
-                            json.dumps(res.verified_badges),
-                            json.dumps(res.other_badges),
-                            json.dumps(res.missing_badges),
-                            res.profile_name,
-                            res.error_reason,
-                            prev_score,
-                            checked_time,
-                            order_idx,
-                        ),
-                    )
-                    await conn.commit()
-
-            # Stream row event
+        # Emit row events for cached items
+        for uid, c_res in cached_results.items():
+            prev_score = existing_profiles[uid].get("prev_score") if uid in existing_profiles else None
             await scan_manager.broadcast(
                 session_id_hash,
                 "row",
                 {
                     "uuid": uid,
                     "url": f"https://www.skills.google/public_profiles/{uid}",
-                    "status": res.status,
-                    "score": res.score,
-                    "from_cache": False,
-                    "profile_name": res.profile_name,
+                    "status": c_res.status,
+                    "score": c_res.score,
+                    "from_cache": True,
+                    "profile_name": c_res.profile_name,
                     "prev_score": prev_score,
-                    "error_reason": res.error_reason,
+                    "error_reason": c_res.error_reason,
                 },
             )
 
-            # Calculate speed and ETA
-            elapsed = max(0.1, time.time() - start_time)
-            rate = done_unique_count / elapsed
-            remaining = total_unique_count - done_unique_count
-            eta = (remaining / rate) if rate > 0 else None
+        # Worker tasks
+        num_workers = min(config.MAX_CONCURRENCY, max(1, len(work_uuids)))
+        db_write_lock = asyncio.Lock()
 
-            # Stream progress event
-            await scan_manager.broadcast(
-                session_id_hash,
-                "progress",
-                {
-                    "done": done_unique_count,
-                    "total": total_unique_count,
-                    "percent": round(
-                        done_unique_count / max(1, total_unique_count) * 100, 1
-                    ),
-                    "counts": status_counts,
-                    "current_rate": round(rate, 2),
-                    "eta_seconds": round(eta, 1) if eta else None,
-                    "recent_errors": recent_errors,
-                    "state": "running",
-                },
+        async def worker():
+            nonlocal done_unique_count
+            while not queue.empty() and not cancel_event.is_set():
+                try:
+                    uid = queue.get_nowait()
+                except asyncio.QueueEmpty:
+                    break
+
+                prev_score = existing_profiles.get(uid, {}).get("score")
+                try:
+                    res = await get_or_fetch_profile(uid)
+                except Exception as e:
+                    res = ProfileScrapeResult(
+                        uuid=uid,
+                        status="network_error",
+                        score=0,
+                        verified_badges=[],
+                        other_badges=[],
+                        missing_badges=list(req_badges.badges),
+                        error_reason=str(e),
+                    )
+
+                done_unique_count += 1
+
+                # Update status counts
+                if res.status == "complete":
+                    status_counts["complete"] += 1
+                elif res.status == "partial":
+                    status_counts["partial"] += 1
+                elif res.status == "none":
+                    status_counts["none"] += 1
+                elif res.status == "private":
+                    status_counts["private"] += 1
+                else:
+                    status_counts["errors"] += 1
+                    recent_errors.append(
+                        {"uuid": uid, "reason": res.error_reason or res.status}
+                    )
+                    if len(recent_errors) > 10:
+                        recent_errors.pop(0)
+
+                # Persist to database
+                checked_time = time.time()
+                async with db_write_lock:
+                    async with get_db() as conn:
+                        order_idx = next(
+                            (i for i, (_, _, u) in enumerate(parsed_rows) if u == uid), 0
+                        )
+                        await conn.execute(
+                            """
+                            INSERT OR REPLACE INTO profiles
+                            (session_id_hash, uuid, url, status, score, verified_badges, other_badges,
+                             missing_badges, profile_name, error_reason, prev_score, last_checked_at, row_order)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            """,
+                            (
+                                session_id_hash,
+                                uid,
+                                f"https://www.skills.google/public_profiles/{uid}",
+                                res.status,
+                                res.score,
+                                json.dumps(res.verified_badges),
+                                json.dumps(res.other_badges),
+                                json.dumps(res.missing_badges),
+                                res.profile_name,
+                                res.error_reason,
+                                prev_score,
+                                checked_time,
+                                order_idx,
+                            ),
+                        )
+                        await conn.commit()
+
+                # Stream row event
+                await scan_manager.broadcast(
+                    session_id_hash,
+                    "row",
+                    {
+                        "uuid": uid,
+                        "url": f"https://www.skills.google/public_profiles/{uid}",
+                        "status": res.status,
+                        "score": res.score,
+                        "from_cache": False,
+                        "profile_name": res.profile_name,
+                        "prev_score": prev_score,
+                        "error_reason": res.error_reason,
+                    },
+                )
+
+                elapsed = max(0.1, time.time() - start_time)
+                rate = done_unique_count / elapsed
+                remaining = total_unique_count - done_unique_count
+                eta = (remaining / rate) if rate > 0 else None
+
+                await scan_manager.broadcast(
+                    session_id_hash,
+                    "progress",
+                    {
+                        "done": done_unique_count,
+                        "total": total_unique_count,
+                        "percent": round(
+                            done_unique_count / max(1, total_unique_count) * 100, 1
+                        ),
+                        "counts": status_counts,
+                        "current_rate": round(rate, 2),
+                        "eta_seconds": round(eta, 1) if eta else None,
+                        "recent_errors": recent_errors,
+                        "state": "running",
+                    },
+                )
+                queue.task_done()
+
+        tasks = [asyncio.create_task(worker()) for _ in range(num_workers)]
+        if tasks:
+            await asyncio.gather(*tasks, return_exceptions=True)
+
+        final_state = "cancelled" if cancel_event.is_set() else "complete"
+
+    except Exception as ex:
+        logger.error(f"Error in orchestrate_scan for session {session_id_hash}: {ex}", exc_info=True)
+        final_state = "error"
+    finally:
+        # Guaranteed reset of session state to idle upon completion, cancellation, or crash
+        async with get_db() as conn:
+            await conn.execute(
+                "UPDATE sessions SET scan_state = 'idle' WHERE id_hash = ?",
+                (session_id_hash,),
             )
-            queue.task_done()
+            await conn.execute(
+                """
+                UPDATE scans
+                SET done = ?, state = ?, finished_at = ?
+                WHERE session_id_hash = ? AND state = 'running'
+                """,
+                (done_unique_count, final_state, time.time(), session_id_hash),
+            )
+            await conn.commit()
 
-    # Launch worker tasks
-    tasks = [asyncio.create_task(worker()) for _ in range(num_workers)]
-    if tasks:
-        await asyncio.gather(*tasks, return_exceptions=True)
-
-    # Final state
-    final_state = "cancelled" if cancel_event.is_set() else "complete"
-
-    async with get_db() as conn:
-        await conn.execute(
-            """
-            UPDATE sessions
-            SET scan_state = ?
-            WHERE id_hash = ?
-            """,
-            ("idle" if final_state == "complete" else "idle", session_id_hash),
-        )
-        await conn.execute(
-            """
-            UPDATE scans
-            SET done = ?, state = ?, finished_at = ?
-            WHERE session_id_hash = ? AND state = 'running'
-            """,
-            (done_unique_count, final_state, time.time(), session_id_hash),
-        )
-        await conn.commit()
-
-    # Emit final completion/cancellation event
-    elapsed = max(0.1, time.time() - start_time)
-    final_progress = {
-        "done": done_unique_count,
-        "total": total_unique_count,
-        "percent": 100.0 if final_state == "complete" else round(done_unique_count / max(1, total_unique_count) * 100, 1),
-        "counts": status_counts,
-        "current_rate": round(done_unique_count / elapsed, 2),
-        "eta_seconds": 0.0,
-        "recent_errors": recent_errors,
-        "state": final_state,
-    }
-    await scan_manager.broadcast(session_id_hash, "progress", final_progress)
-    await scan_manager.broadcast(session_id_hash, "complete", final_progress)
+        # Emit final progress & complete events
+        elapsed = max(0.1, time.time() - start_time)
+        final_progress = {
+            "done": done_unique_count,
+            "total": total_unique_count,
+            "percent": 100.0 if final_state == "complete" else round(done_unique_count / max(1, total_unique_count) * 100, 1),
+            "counts": status_counts,
+            "current_rate": round(done_unique_count / elapsed, 2),
+            "eta_seconds": 0.0,
+            "recent_errors": recent_errors,
+            "state": final_state,
+        }
+        await scan_manager.broadcast(session_id_hash, "progress", final_progress)
+        await scan_manager.broadcast(session_id_hash, "complete", final_progress)
