@@ -170,10 +170,11 @@ h1 {
 
 .step-num {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  color: var(--primary);
-  background: rgba(37, 99, 235, 0.1);
+  color: var(--text-main);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   padding: 3px 8px;
   border-radius: 4px;
   width: fit-content;
@@ -183,10 +184,11 @@ h1 {
 
 .feature-tag {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  color: var(--success);
-  background: rgba(30, 142, 62, 0.1);
+  color: var(--text-muted);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   padding: 3px 8px;
   border-radius: 4px;
   width: fit-content;
@@ -214,24 +216,24 @@ h1 {
 
 /* Upload zone */
 .dropzone {
-  border: 2px dashed var(--primary);
+  border: 2px dashed var(--border-color);
   border-radius: var(--radius);
   padding: 40px 20px;
   text-align: center;
   cursor: pointer;
-  background: rgba(26, 115, 232, 0.02);
+  background: var(--bg-color);
   transition: all 0.2s ease;
 }
 
 .dropzone:hover, .dropzone.dragover {
-  background: rgba(26, 115, 232, 0.08);
-  border-color: var(--primary-hover);
+  background: var(--card-bg);
+  border-color: #ffffff;
 }
 
 .upload-icon {
   font-size: 40px;
   margin-bottom: 12px;
-  color: var(--primary);
+  color: var(--text-muted);
 }
 
 .upload-actions {
@@ -487,11 +489,11 @@ h1 {
 
 .badge-tag {
   display: inline-block;
-  background: rgba(37, 99, 235, 0.12);
-  color: var(--primary);
-  border: 1px solid rgba(37, 99, 235, 0.25);
+  background: var(--bg-color);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  padding: 4px 8px;
+  padding: 4px 10px;
   font-size: 12px;
   font-weight: 500;
   margin: 3px;
@@ -500,9 +502,9 @@ h1 {
 
 @media (prefers-color-scheme: dark) {
   .badge-tag {
-    background: rgba(59, 158, 255, 0.15);
-    color: #60a5fa;
-    border: 1px solid rgba(59, 158, 255, 0.35);
+    background: var(--bg-color);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
   }
 }
 
