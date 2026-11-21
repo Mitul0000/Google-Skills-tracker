@@ -30,8 +30,5 @@ COOKIE_NAME = "lwc_session"
 COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").lower() in ("true", "1", "yes")
 COOKIE_SAMESITE = "lax"
 
-# Mock Mode
-MOCK_FETCH = os.getenv("MOCK_FETCH", "0").lower() in ("true", "1", "yes")
-
 # Badges Config Path
 REQUIRED_BADGES_PATH = os.getenv("REQUIRED_BADGES_PATH", str(BASE_DIR / "required_badges.json"))

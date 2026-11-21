@@ -114,88 +114,6 @@ class ScanManager:
 scan_manager = ScanManager()
 
 
-async def fetch_profile_mock(uuid_str: str) -> ProfileScrapeResult:
-    """
-    Mock fetcher for testing and offline development (MOCK_FETCH=1).
-    """
-    await asyncio.sleep(0.05)  # simulate brief network delay
-    req_badges = load_required_badges()
-    fixtures_dir = Path(__file__).resolve().parent.parent / "tests" / "fixtures"
-
-    # Known mock behaviors
-    if uuid_str == "be556f7b-ab4b-4be7-82fb-9be45202ddd7":
-        fixture_file = fixtures_dir / "sample_complete.html"
-    elif uuid_str == "8f0d00c3-7674-4042-ba15-d26a3fae84f9":
-        fixture_file = fixtures_dir / "sample_partial_6of10.html"
-        if not fixture_file.is_file():
-            fixture_file = fixtures_dir / "sample_partial.html"
-    elif uuid_str == "2fafe410-5b6c-463b-9a1d-61dbfb43e9ac":
-        fixture_file = fixtures_dir / "sample_zero.html"
-    elif uuid_str == "172773ae-1097-499b-a064-0be32bd06b81":
-        return ProfileScrapeResult(
-            uuid=uuid_str,
-            status="private",
-            score=0,
-            verified_badges=[],
-            other_badges=[],
-            missing_badges=list(req_badges.badges),
-            error_reason="Account which is now private",
-        )
-    elif uuid_str == "mock-429":
-        return ProfileScrapeResult(
-            uuid=uuid_str,
-            status="rate_limited",
-            score=0,
-            verified_badges=[],
-            other_badges=[],
-            missing_badges=list(req_badges.badges),
-            error_reason="rate limited",
-        )
-    elif uuid_str == "mock-500":
-        return ProfileScrapeResult(
-            uuid=uuid_str,
-            status="server_error",
-            score=0,
-            verified_badges=[],
-            other_badges=[],
-            missing_badges=list(req_badges.badges),
-            error_reason="HTTP 500",
-        )
-    elif uuid_str == "mock-timeout":
-        return ProfileScrapeResult(
-            uuid=uuid_str,
-            status="timeout",
-            score=0,
-            verified_badges=[],
-            other_badges=[],
-            missing_badges=list(req_badges.badges),
-            error_reason="timeout",
-        )
-    elif uuid_str == "mock-layout-changed":
-        fixture_file = fixtures_dir / "sample_layout_changed.html"
-    elif uuid_str == "9f130a25-e289-41ea-a90a-febbf37b8dc1":
-        fixture_file = fixtures_dir / "sample_random1.html"
-    elif uuid_str == "f0633f18-fd81-4cc0-b375-1454da352885":
-        fixture_file = fixtures_dir / "sample_random2.html"
-    else:
-        fixture_file = fixtures_dir / "sample_zero.html"
-
-    if fixture_file.is_file():
-        with open(fixture_file, "r", encoding="utf-8") as f:
-            html = f.read()
-        return parse_profile_html(html, uuid_str, req_badges)
-
-    return ProfileScrapeResult(
-        uuid=uuid_str,
-        status="none",
-        score=0,
-        verified_badges=[],
-        other_badges=[],
-        missing_badges=list(req_badges.badges),
-        error_reason=None,
-    )
-
-
 async def fetch_profile_live(uuid_str: str) -> ProfileScrapeResult:
     """
     Fetches and parses a single profile URL with token bucket rate limiting,
@@ -330,10 +248,7 @@ async def get_or_fetch_profile(uuid_str: str) -> ProfileScrapeResult:
 
             async def _worker():
                 try:
-                    if config.MOCK_FETCH:
-                        res = await fetch_profile_mock(uuid_str)
-                    else:
-                        res = await fetch_profile_live(uuid_str)
+                    res = await fetch_profile_live(uuid_str)
                     future.set_result(res)
                 except Exception as ex:
                     future.set_exception(ex)
